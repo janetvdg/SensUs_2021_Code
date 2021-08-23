@@ -66,15 +66,15 @@ print('ROIs', ROIs)
 #%%  
 ## PRE-PROCESSING IMAGES
 #1. Temporal average filter
-#imgs_avg = temporal_mean_filter(imgs, 5)
-imgs_median = temporal_median_filter(imgs, 5)
+imgs_avg = temporal_mean_filter(imgs, 5)
+#imgs_median = temporal_median_filter(imgs, 5)
 
 #2. Homogenizing incident light to have a flat background: background illumination intensity correction
 
 # Saving
 SAVING_FOLDER = os.path.join(IMG_PROCESSED_FOLDER, NAME_IMG_FOLDER) 
-#save_imgs(imgs_avg, SAVING_FOLDER, NAME_IMG_FOLDER+'_avg_') # saving in a folder with the name of the original one but inside /images_processed
-save_imgs(imgs_median, SAVING_FOLDER, NAME_IMG_FOLDER+'_median_')
+save_imgs(imgs_avg, SAVING_FOLDER, NAME_IMG_FOLDER+'_avg_') # saving in a folder with the name of the original one but inside /images_processed
+#save_imgs(imgs_median, SAVING_FOLDER, NAME_IMG_FOLDER+'_median_')
 
 
 ## ANALYZING IMAGES
