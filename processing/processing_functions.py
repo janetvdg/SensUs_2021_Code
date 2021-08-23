@@ -167,5 +167,16 @@ def smooth_background(img, rescale_factor=0.1, poly_deg=[2,2]):
 
 
 
-test = imgs[0]
-smooth_background(test)
+#test = imgs[0]
+#background = smooth_background(test)
+#plt.imshow(background)
+
+
+
+
+## ANALYZING IMAGES
+# Now that the ROIs have been selected we need to analyse the results in our folder
+#capture_refresh_time = 2 # TODO
+#mes = Measure(results_folder, ROIs, capture_refresh_time)
+#slope, concentration = mes.execute_analysis()
+#print(slope,concentration)
