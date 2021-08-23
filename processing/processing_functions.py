@@ -9,21 +9,33 @@ import os
 from PIL import Image
 import numpy as np
 
-
-# Opening images in directory folder
-#imgs = [] # list with all the images (jpg or png)
-#directory = r'../../test_preproc'  #TODO: Change to wanted directory
-#print('Opening images '+str(os.listdir(directory))+'...')
-#for filename in os.listdir(directory):
-#    if filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg'):
-#        img_path = os.path.join(directory, filename)
-#        #print(img_path)
-#        img = np.array(Image.open(img_path))
-#        imgs.append(img) #appending the image to the list
-#        
-#    else:
-#        continue
 #    
+
+def open_images(path):
+    """
+    Opening images
+    """
+    
+    imgs = [] # list with all the images (jpg or png)
+    print('\n Opening images '+str(path)+'...')
+    #for filename in os.listdir(directory):
+    
+    os.chdir(path)  #TODO: NOT SURE ABOUT THIS
+    files = sorted(filter(os.path.isfile, os.listdir(path)), key=os.path.getctime)  # ordering the images by date of creation
+
+    for filename in files:
+    #for filename in sorted(os.listdir(path)):
+        if filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg'):
+            img_path = os.path.join(path, filename)
+            #print(img_path)
+            img = np.array(Image.open(img_path))
+            imgs.append(img) #appending the image to the list
+            
+        else:
+            continue
+    return imgs
+
+#files.sort(key=os.path.getctime)
 
 def temporal_median_filter(imgs, size_kernel):
     """ Temporal median filter
@@ -73,20 +85,19 @@ def temporal_mean_filter(imgs, size_kernel):
     return imgs_med
 
 
-# Median
-#imgs_med = temporal_median_filter(imgs, 5)
-#print('Saving images filtered with a temporal median filter...')
-#for i in np.arange(0, len(imgs_med)):
-#    Image.fromarray(imgs_med[i]).save('median_'+str(i)+'.png')
-# 
-  
-# Average
-#imgs_avg = temporal_mean_filter(imgs, 5)
-#print('Saving images filtered with a temporal average filter...')
-#for i in np.arange(0, len(imgs_avg)):
-#    Image.fromarray(imgs_avg[i]).save('avg_'+str(i)+'.png')
-#    
 
+def save_imgs(imgs, path, name):
+    print('Saving images in '+str(path)+'...')
+    
+    #Create the folder
+    dir = path
+    if not os.path.exists(dir):
+        os.mkdir(dir)
+    
+    for i in np.arange(0, len(imgs)):
+        Image.fromarray(imgs[i]).save(os.path.join(path, name+str(i)+'.png'))
+        
+        
 
 
 
