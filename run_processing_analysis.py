@@ -16,7 +16,7 @@ from PIL import Image
 import numpy as np
 from tkinter import filedialog, Tk
 from processing.processing_functions import temporal_mean_filter, save_imgs, temporal_median_filter, open_images
-from analysis.Analyse_results import Measure
+from analysis.Analyse_results_with_connected_components import Measure
 #from AcquireAndSave import execute_capture
 #from AcquireAndDisplay import execute_focus
 from analysis.Select_ROI import execute_roi  #TODO: SOMETIMES THIS DOES NOT WORK
@@ -79,6 +79,9 @@ save_imgs(imgs_avg, SAVING_FOLDER, NAME_IMG_FOLDER+'_avg_') # saving in a folder
 
 ## ANALYZING IMAGES
 # Add here pipeline to analyse the images
+capture_refresh_time = 2  # TODO!!!!!!!!
+mes = Measure(NAME_IMG_FOLDER, ROIs, capture_refresh_time)
+signal = mes.signal_per_image()
 
 
     
