@@ -12,25 +12,16 @@ import numpy as np
 
 
 
-
 #Still need to change this such that after being deleted the circle actually dissapears
-def click_event(event, x, y, flags, params ):
+def click_event(event, x, y, flags, params):
    # checking for left mouse clicks, at the moment left mouse clicks are considered as signal 
- 
-   global temp
-   global imgc
-   global circles
-   global ROI_radius
+   [imgc, circles, ROI_radius] = params
+
    
    if event == cv2.EVENT_LBUTTONDOWN:
         temp = np.copy(imgc)
-        
-        # displaying the coordinates
-        # on the Shell
-        print(x, ' ', y)
 
         circles.append(np.array([x, y, ROI_radius]))
-        print(len(circles))
   
         # displaying the coordinates of the new circle
         # on the image window
@@ -43,10 +34,7 @@ def click_event(event, x, y, flags, params ):
    # checking for right mouse clicks  , considered as background   
    if event==cv2.EVENT_RBUTTONDOWN:
        temp = np.copy(imgc)
-
-       del circles[-1]
-       print(len(circles))
-        
+       del circles[-1]  
        print_ROI(temp, circles)        
         
        
@@ -54,17 +42,13 @@ def print_ROI(temp, circles):
     for circle in circles:
         cv2.circle(temp, center=circle[:2], radius=circle[2],
                    color=(255,255,0), thickness=2)
-    
-    print("I am  drawing a circle")
     cv2.imshow('image', temp)
     
     
 def execute_roi(path_image, image_size, cc):
-    global circles  #Why global?? Why not a return?
+    print('Select the ROI. Press right button if you want to delete. The last 2 ROIs will be used as background. Press \'q\' when you have finished. ')
     circles = [] 
-    global ROI_radius 
     ROI_radius = cc
-    print(ROI_radius)
     
     # reading the image
     img = cv2.resize(cv2.imread(path_image, 0), image_size)
@@ -72,12 +56,14 @@ def execute_roi(path_image, image_size, cc):
     # displaying the image
     cv2.imshow('image', img)
     
-    global imgc
+    #global imgc
     imgc = np.copy(img)
+    
+    params = [imgc, circles, ROI_radius]
   
     # setting mouse hadler for the image
     # and calling the click_event() function
-    cv2.setMouseCallback('image', click_event)
+    cv2.setMouseCallback('image', click_event, params)
   
     # wait for a key to be pressed to exit
     cv2.waitKey(0)
