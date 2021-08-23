@@ -1,8 +1,8 @@
 from threading import Thread, Event, Lock
 from queue import Queue, Full, Empty
-from time import time
+import time
 from logging import getLogger
-import application.acquisition as acquisition
+from . import acquisition
 import numpy as np
 
 
@@ -23,9 +23,11 @@ class Photographer(Thread):
         self.capture_path = capture_path
         self.n_acquisitions = n_acquisitions
         self.acquisition = None
+        self.acquisition_c = None
         self._acquisition_i = 0
         self._acquisition_i_lock = Lock()
         self.mode = None
+        self.t_st=time.process_time()
         self.quitting = Event()
         self._start_time = None
         self._start_time_lock = Lock()
@@ -55,7 +57,7 @@ class Photographer(Thread):
         total_time = self.n_acquisitions * self.capture_refresh_time
         if start_time is None:
             return 0
-        time_progress = max(min((time() - start_time) / total_time, 1), 0)
+        time_progress = max(min((time.process_time() - start_time) / total_time, 1), 0)
         n_img_progress = self.acquisition_i / self.n_acquisitions
         return n_img_progress
 
@@ -92,19 +94,40 @@ class Photographer(Thread):
                     pass
 
             # capture
-            if self.mode == 'capture' \
-                    and time() - t_capt > self.capture_refresh_time:
-                t_capt = time()
+            if self.mode == 'capture':
+                #if id(self.acquisition)!=id(None):
+                if hasattr(self, 'acquisition'):
+                    del self.acquisition
                 self.log.debug('Photographe capture')
                 try:
-                    self.capture()
+                    #self.capture()
+                    flag=True
+                    print('s')
+                    self.acquisition_c= acquisition.Capture(expo_time=self.expo_time)
+                    while flag:
+                        if time.process_time() - self.t_st > self.capture_refresh_time:
+                            print('real time fps',1/(time.process_time()-self.t_st))
+                            img = self.acquisition_c.get_image()
+                            self.t_st = time.process_time()
+                            self.log.info(f'capture res: {img.shape}')
+                            path = self.capture_path + f"{self.acquisition_i:04d}"
+                            np.save(path, img)
+                            print(time.process_time())
+                            self.log.debug(f'Capture to "{path}"')
+                            self.acquisition_i += 1
+                            if self.acquisition_i >= self.n_acquisitions:
+                                flag=False
+                                self.log.info('Capture mode ended')
+                                self.mode = 'live_stream'   
+                    del self.acquisition_c
+                    self.acquisition = acquisition.LiveStream()
                 except BaseException as e:
                     self.log.debug(f'Failed to captura: {e}')
 
-            # livestream
-            if self.mode \
-                    and time() - t_live > 1 / self.live_stream_fps:
-                t_live = time()
+            #livestream
+            if self.mode=='live_stream' \
+                    and time.process_time() - t_live > 1 / self.live_stream_fps:
+                t_live = time.process_time()
                 self.log.debug('Photographe live_stream')
                 try:
                     self.live_stream()
@@ -123,7 +146,7 @@ class Photographer(Thread):
             self.log.info(f'capture res: {img.shape}')
             path = self.capture_path + f"{self.acquisition_i:04d}"
             np.save(path, img)
-            print(time())
+            print(time.process_time())
             self.log.debug(f'Capture to "{path}"')
             self.acquisition_i += 1
             if self.acquisition_i >= self.n_acquisitions:
@@ -136,7 +159,8 @@ class Photographer(Thread):
 
     def live_stream(self):
         try:
-            del self.acquisition
+            if self.mode:
+                del self.acquisition
             self.acquisition = acquisition.LiveStream()
             live_image = self.acquisition.get_image()
             try:
@@ -163,7 +187,7 @@ class Photographer(Thread):
 
     def start_capture_mode(self):
         self.acquisition_i = 0
-        self.start_time = time()
+        self.start_time = time.process_time()
         del self.acquisition
         self.acquisition = acquisition.Capture()
         self.expo_time = self.acquisition.get_exposure_time()

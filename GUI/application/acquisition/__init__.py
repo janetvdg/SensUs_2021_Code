@@ -1,22 +1,22 @@
-#from . import camera as cam
+from . import camera as cam
 import cv2
 import numpy as np
 from logging import getLogger
 
-frameWidth = 640
-frameHeight = 480
+#frameWidth = 640
+#frameHeight = 480
 
-cap = cv2.VideoCapture(0)
-cap.set(3,frameWidth)
-cap.set(4, frameHeight)
-cap.set(10,150)
+#cap = cv2.VideoCapture(0)
+#cap.set(3,frameWidth)
+#cap.set(4, frameHeight)
+#cap.set(10,150)
 
 
 class Acquistion:
 
     def __init__(self):
         self.acq_log = getLogger('main.acquisition')
-        self.cam = cap.read() #cam.Camera()
+        self.cam = cam.Camera()  #cap.read() 
 
     def BeginAcquisition(self):
         self.cam.BeginAcquisition()

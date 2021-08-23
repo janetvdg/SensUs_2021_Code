@@ -11,7 +11,7 @@ class Layer(gui.Layer):
         gui.Layer.__init__(self, app, bg_color)
         if self.background is None:
             self.background = gui.Image(self, [800/2, 480/2],
-                                        'images/background.jpg',
+                                        'images/wallpaper.png',
                                         h=480)
 
     def set_layer(self, l):
@@ -26,7 +26,7 @@ class Layer(gui.Layer):
         h_btn = 50
         pitch = 75
         x_img = 220
-        x_btn = 200
+        x_btn = 400
         y0 = round(600/2 - (len(buttons) - 1) / 2 * pitch)
         offset = 0
         for n, (k, title, path, action) in enumerate(buttons):
@@ -59,10 +59,10 @@ class Layer(gui.Layer):
                                   lambda: self.set_layer(target))
 
     def create_title(self, title):
-        self['title'] = gui.Text(self, (200, 50), title, font_size=35)
+        self['title'] = gui.Text(self, (400, 50), title, font_size=35)
         
     def create_text(self, text):
-        self['text'] = gui.Text(self, (200, 100), text, font_size=20)
+        self['text'] = gui.Text(self, (400, 100), text, font_size=20)
 
 
 class OverLayer(Layer):
@@ -81,13 +81,12 @@ class WelcomeLayer(Layer):
 
     def __init__(self, app):
         super().__init__(app)
-        self['logo'] = gui.Image(self, (220, 200),
-                                 'images/SenSwiss_logo.png',
-                                 h=300)
-        self['text'] = gui.Text(self, (220, 500),
-                                'Team SenSwiss from EPFL',
-                                font_size=25, color=(218, 41, 28))
-
+        #self['logo'] = gui.Image(self, (220, 200),'images/SenSwiss_logo.png',h=300)
+        #self['text'] = gui.Text(self, (220, 500),'Team SenSwiss from EPFL',font_size=25, color=(218, 41, 28))
+        self['background'] = gui.Image(self, [800/2, 480/2],"images/backgroundSenSwiss.jpeg", h=480)
+        
+        
+        
     def click_down(self, pos, catched):
         self.app.active_layer = 'main'
         return True
@@ -99,32 +98,34 @@ class MainLayer(Layer):
         super().__init__(app)
         btn_list = [
             ('measure', 'New measure', 'images/measure.png',
-             lambda: self.set_layer('chip')),
+             lambda: self.set_layer('focus')),
             ('manual', 'User manual', 'images/help.png',
              lambda: self.set_layer('manual')),
+            ('contact', 'Contact Support', 'images/phone.png',
+             lambda: self.set_layer('contact')),
         ]
         self.create_background()
         self.create_title('Welcome')
-        self['text'] = gui.Text(self, (200,100),
-                                'You are about to start a saliva test',
+        self['text'] = gui.Text(self, (400,100),
+                                'Influenza saliva test',
                                 font_size=20, color=(0, 0, 0))
         self.create_buttons_list(btn_list)
-        self.create_back_button('welcome','Suspend')
+        self.create_back_button('welcome','Back')
 
 class ManualLayer(Layer):
 
     def __init__(self, app):
         super().__init__(app)
         self.create_title('User manual')
-        self.create_back_button('chip')
-        self['text'] = gui.Text(self, (220, 100),
-                                'Do something...',
+        self.create_back_button('main')
+        self['text'] = gui.Text(self, (400, 100),
+                                'Put image of manual...',
                                 font_size=25, color=(0, 0, 0))
-        self['text'] = gui.Text(self, (220, 300),
+        self['text'] = gui.Text(self, (400, 300),
                                 'Do something more...',
                                 font_size=25, color=(0, 0, 0))
 
-
+'''
 class ChipLayer(Layer):
 
     def __init__(self, app):
@@ -137,18 +138,35 @@ class ChipLayer(Layer):
         ]
         self.create_background()
         self.create_title('Prepare the cartridge') #Changed
-        self.create_text('1. Place the cartridge')
         self.create_buttons_list(btn_list)
         self.create_back_button('main', 'Cancel')
+''' 
 
-
-class Tutorial1Layer(Layer):
+class ContactLayer(Layer):
 
     def __init__(self, app):
         super().__init__(app)
-        self.create_title('Insert the chip')
-        self.create_next_button('tutorial2')
-        self.create_back_button('chip')
+        self.create_background()
+        self.create_title('In case of problem, please contact us')
+        self.create_back_button('main')
+        self['rect'] = gui.Rectangle(self, (400, 260), (500, 200),
+                                     color=(255, 255, 255))
+        self['phone_img'] = gui.Image(self, (200, 200),
+                                      'images/phone.png', h=50)
+        self['phone'] = gui.Text(self, (450, 200),
+                                 'Phone: 078 842 25 20')
+        self['mail_img'] = gui.Image(self, (200, 300),
+                                     'images/mail.png', h=50)
+        self['mail'] = gui.Text(self, (450, 300),
+                                'Email: teamEPFSens@gmail.com')
+'''
+class TutorialLayer(Layer):
+
+    def __init__(self, app):
+        super().__init__(app)
+        self.create_title('ADD USER MANUAL')
+        #self.create_next_button('tutorial2')
+        self.create_back_button('main')
         self['img'] = gui.Image(self, [400, 270],
                                 'images/tuto1.png',
                                 h=300)
@@ -198,18 +216,19 @@ class Tutorial5Layer(Layer):
                                 h=300)
 
 
+
 class InsertLayer(Layer):
 
     def __init__(self, app):
         super().__init__(app)
         self.create_title('Insert the chip')
         self.create_next_button('focus', 'Done')
-        self.create_back_button('chip')
+        self.create_back_button('main')
         # TODO create correct insert_chip.png
         self['img'] = gui.Image(self, [400, 280],
                                 'images/insert_chip.png',
                                 h=300)
-
+'''
 
 class FocusLayer(Layer):
 
@@ -222,7 +241,7 @@ class FocusLayer(Layer):
         self['stream'] = gui.Video(self)
         self.create_title('Please set the focus')
         self.create_next_button('acquisition', 'Done')
-        self.create_back_button('insert')
+        self.create_back_button('main')
 
 
 class AcquisitionLayer(Layer):
