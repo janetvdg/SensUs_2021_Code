@@ -33,13 +33,18 @@ class Measure:
         self.capture_refresh_time = capture_refresh_time
         self.log = getLogger('main.Analysis')
 
-    def find_GNP(self, img):
+    def find_GNP(self, img): 
         ''' Function that will compute the connected components and return the number of components
         between 3-5 pixels TO BE DISCUSSED IF PIXELS CHANGE SIZE WITH PREPROCESSING
-        Connected components of sizes 1 or 2 and above 30 will be disconsidered
+        Connected components of sizes 1 or 2 and above 30 will be disconsidered.
         
         An AU-NP is considered as a connected component with size between ????? TODO
+         
+        returns: 
+            nb_pixels: number of pixels corresponding to AU-NP
         '''
+        print("shape image in find_GNP")
+        print(img.shape)
         components = cv2.connectedComponentsWithStats(img, 8, cv2.CV_32S)
         num_labels = components[0]  # number of labels
         labels = components[1]      # label matrix, where each pixel in the same connected component gets the same value
@@ -47,35 +52,28 @@ class Measure:
         centroids = components[3]   # centroid matrix
         
         nb_pixels = 0
-        print(num_labels,'num_labels')
-        
         for c in range(0, num_labels):
             if c == 0:
                 print("background")
             else:
-                ("print not background")
-                area = stats[c, cv2.CC_STAT_AREA]  # area = amount of pixels in a connected component
+                print("Signal")
+                area = stats[c, cv2.CC_STAT_AREA]
                 
-                # In our device (2021) the pixels are 80nm x 80nm  --> 0.8 pix/NP
+                if((area>9) & (area<90)): #TODO: before it was 3, 30
+                    nb_pixels = nb_pixels + area 
                 
-                if((area>3) & (area<30)):   #TODO: CHANGE
-                    nb_pixels = nb_pixels + area  # number of pixels that (supposedly) correspond to a AU-NP
-                
-        return nb_pixels
+        return nb_pixels, labels
             
+    
     def signal_perImage(self, img, tr):
 
         spot = []
         connectivity = 8 #changed: connectivity for connected components
         for cx, cy, rad in self.circles :
             self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
-            xvec, yvec = circle(cx,cy,rad)  #TODO: CHANGE TO DISK, SOME PROBLEMS HERE WITH SIZE
-            intensity_perSpot = img[yvec, xvec].mean()  # Selecting rows and columns means x and y are swapped
-            #spot.append(np.mean(img[yvec, xvec] < tr)) # Note that we are counting pixels below threshold
-            #plt.imshow(img[yvec, xvec] < tr)
-            #For this to work we need to binarise the image too
-            spot.append(self.find_GNP(img[yvec, xvec]))  #Changed
-            #plt.imshow(spot)
+            xvec, yvec = circle(cx, cy, rad)  #TODO: CHANGE TO DISK, SOME PROBLEMS HERE WITH SIZE
+            S, labels = self.find_GNP(img[yvec, xvec])
+            spot.append(S)  #Changed
         
         
         background = np.sum(np.array(spot[-2:])) #changed to sum 
