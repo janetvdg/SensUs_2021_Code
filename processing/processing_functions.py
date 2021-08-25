@@ -9,7 +9,8 @@ import os
 from PIL import Image
 import numpy as np
 import cv2
-from Select_ROI import execute_roi
+from processing.Select_ROI import execute_roi
+from skimage.draw import circle
 
 #    
 
@@ -19,6 +20,8 @@ def open_images(path):
     """
     
     imgs = [] # list with all the images (jpg or png)
+    #parent = os.getcwd()
+    #path = os.path.join(parent, PATH)
     print('\n Opening images '+str(path)+'...')
     #for filename in os.listdir(directory):
     
@@ -107,44 +110,104 @@ def temporal_mean_filter(imgs, size_kernel):
 
 
 
-def binarize_imgs(imgs, tr):
-    '''
-    Binarize images
-    Function to binarize a stack of images using a threshold.
-    input:
-        imgs: array of images of size (x, y, num_images)
-    output:
-        rets: array of thresholds
-        imgs_thresh: binarized images with a threshold
-    '''
-    rets = []
-    imgs_thresh = []
-    for image in imgs:
-        ret, img_thresh = cv2.threshold(image, tr, 255, cv2.THRESH_BINARY)
-        rets.append(ret)
-        imgs_thresh.append(img_thresh)
-    return rets, imgs_thresh
-
-
-def correct_background(img):
+def correct_background(imgs):
     '''
     Function to correct the background illumination using
     Corrected_Image = (Specimen - Darkfield) / (Brightfield - Darkfield) * 255
     Needs Darkfield.png and Brightfield.png images saved at the main folder
     input:
-        img: BW image as array
+        imgs: list of BW images as array
     output:
-        img_corrected
+        imgs_corrected
     '''
-    path = os.getcwd()  # Working directory needs to be in main folder SensUs_Code_2021
-
+    
+    imgs_corrected = []
+    #TODO: THIS WAY IS NOT THE BEST TO GET THE WORKING DIRECTORY, SOMETIMES IT DOES NOT WORK
+    path = os.path.dirname(os.path.realpath('processing_functions.py'))  # Working directory needs to be in main folder SensUs_Code_2021
     darkfield = np.array(Image.open(os.path.join("Darkfield.png")))
     brightfield = np.array(Image.open(os.path.join("Brightfield.png")))
-    specimen = img
-
-    img_corrected = (specimen - darkfield) / (brightfield - darkfield) * 255
     
-    return img_corrected
+    print('Correcting background illumination intensity...')
+    for img in imgs:
+        specimen = img
+        img_corrected = (specimen - darkfield) / (brightfield - darkfield) * 255
+        #Normalizing the result
+        img_corrected_norm = np.array((img_corrected-img_corrected.min()) / (img_corrected.max()-img_corrected.min()) * 255, dtype=np.uint8)
+        #img_corrected_norm.astype(np.uint8)
+        imgs_corrected.append(img_corrected_norm)
+    
+    #np.array(cv2.normalize(img_corrected, None, alpha=0, beta=255), dtype='int') 
+    
+    return imgs_corrected
+
+
+def binarize_imgs(imgs, tr):
+    '''
+    Binarize images
+    Function to binarize a list of images using a threshold.
+    input:
+        imgs: list of images as arrays
+    output:
+        rets: array of thresholds
+        imgs_thresh: binarized images with a threshold
+    '''
+    
+    print('Binarizing images...')
+    rets = []
+    imgs_thresh = []
+    for image in imgs:
+        ret, img_thresh = cv2.threshold(image, tr, 255, cv2.THRESH_BINARY)
+        imgs_thresh.append(img_thresh)
+        rets.append(ret)
+    return rets, imgs_thresh
+
+
+
+def invert_imgs(imgs):
+    '''
+    Invert images
+    Function to invert a lsit of images using a threshold.
+    input:
+        imgs: list of images as arrays
+    output:
+        imgs_inv: inverted images
+    '''
+    
+    imgs_inv = []
+    print('Inverting images...')
+    for img in imgs:
+        imgs_inv.append(np.invert(img))
+    
+    return imgs_inv
+
+
+def mask_ROIs(imgs, ROIs):  #TODO: MAKE IT WORK
+    '''
+    Function that applies a mask to the image using the ROIs
+    input:
+        imgs: list of original images (BW)
+        ROIs: array with x, y, radius with size (number_ROIs, 3)
+    output:
+        imgs_masked: masked images (with black background)
+    '''
+    print('Masking images...')
+    xvecs = []
+    yvecs = []
+    imgs_masked = []
+    mask = np.zeros(imgs[0].shape)
+    
+    for cx, cy, rad in ROIs :
+        #self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
+        xvec, yvec = circle(cx,cy,rad) 
+        xvecs.append(xvec)
+        yvecs.append(yvec)
+    
+    mask[yvecs, xvecs] = True
+    
+    for img in imgs:
+        imgs_masked.append(img*mask)
+        
+    return imgs_masked
 
 
 
@@ -238,20 +301,20 @@ def smooth_background(img, rescale_factor=0.1, poly_deg=[2,2]):
 
 
 #%%
-import os
-path = os.getcwd()  # Working directory needs to be in main folder SensUs_Code_2021
-
-darkfield = np.array(Image.open(os.path.join("Darkfield.png")))
-brightfield = np.array(Image.open(os.path.join("Brightfield.png")))
-specimen = np.array(Image.open(os.path.join("Specimen.png")))
-
-corrected_img = (specimen - darkfield) / (brightfield - darkfield) * 255
-
-a = [specimen, darkfield, brightfield, corrected_img]
-fig, axes = plt.subplots(2,2)
-for i, ax in enumerate(axes.flat):
-    c = ax.imshow(a[i], cmap='gray')
-    fig.colorbar(c, ax = ax)
+#import os
+#path = os.getcwd()  # Working directory needs to be in main folder SensUs_Code_2021
+#
+#darkfield = np.array(Image.open(os.path.join("Darkfield.png")))
+#brightfield = np.array(Image.open(os.path.join("Brightfield.png")))
+#specimen = np.array(Image.open(os.path.join("Specimen.png")))
+#
+#corrected_img = (specimen - darkfield) / (brightfield - darkfield) * 255
+#
+#a = [specimen, darkfield, brightfield, corrected_img]
+#fig, axes = plt.subplots(2,2)
+#for i, ax in enumerate(axes.flat):
+#    c = ax.imshow(a[i], cmap='gray')
+#    fig.colorbar(c, ax = ax)
     #ax.set_title('Threshold '+str(tr))
     #%%
 

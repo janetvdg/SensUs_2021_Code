@@ -10,8 +10,6 @@ Created on Sun Aug 22 11:12:06 2021
 @author: janet
 
 
-TO-DO: add the last cell to analyse_results_with_connected_components
-check if detects au-np
 """
 
 
@@ -21,7 +19,7 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from tkinter import filedialog, Tk
-from processing.processing_functions import temporal_mean_filter, save_imgs, temporal_median_filter, open_images, binarize_imgs, correct_background, select_ROI
+from processing.processing_functions import temporal_mean_filter, save_imgs, temporal_median_filter, open_images, binarize_imgs, correct_background, select_ROI, invert_imgs, mask_ROIs
 from analysis.Analyse_results_with_connected_components import Measure
 #from analysis.Select_ROI import execute_roi
 #from AcquireAndSave import execute_capture
@@ -59,7 +57,7 @@ imgs = open_images(IMG_PATH)
  #%%
 
 ## SELECT ROI
-ROIs = select_ROI(ROI_PATH)  #TODO: CHECK IT WORKS
+ROIs = select_ROI(ROI_PATH) 
 #TODO: close image
 
 
@@ -71,66 +69,28 @@ imgs_avg = temporal_mean_filter(imgs, 5)
 #imgs_median = temporal_median_filter(imgs, 5)
 
 # 2. Background illumination intensity correction
-imgs_corrected = []
-for img in imgs_avg:
-    imgs_corrected.append(correct_background(img))
+imgs_corrected = correct_background(imgs_avg)
 
 # 3. Inverting image (our AU-NP spots will be white ~255)
-imgs_inv = np.invert(imgs_corrected)
-
+imgs_inv = invert_imgs(imgs_corrected)
+    
 # 4. Binarizing images: we will have a binary image based on a threshold
-rets, imgs_thresh = binarize_imgs(imgs_inv, tr = 200)   #TODO: FIND THRESHOLD
+rets, imgs_thresh = binarize_imgs(imgs_inv, tr = 180)   #TODO: FIND THRESHOLD
 
-
-
-
-#%%
 # 5. Applying a mask with the ROIs
- 
-from skimage.draw import circle
+imgs_masked = mask_ROIs(imgs_thresh, ROIs)
 
-def mask_ROIs(img, ROIs):  #TODO: MAKE IT WORK
-    '''
-    Function that applies a mask to the image using the ROIs
-    input:
-        img: original image (BW)
-        ROIs: array with x, y, radius with size (number_ROIs, 3)
-    output:
-        masked_img: masked image (with black background)
-    '''
-    xvecs = []
-    yvecs = []
-    mask = np.zeros(img.shape)
-    
-    for cx, cy, rad in ROIs :
-        #self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
-        xvec, yvec = circle(cx,cy,rad) 
-        xvecs.append(xvec)
-        yvecs.append(yvec)
-        
-        
-    
-    mask[yvecs, xvecs] = True
-    img_masked = img*mask
-    return img_masked
 
-xvecs = []
-yvecs = []
-mask = np.zeros(img.shape)
+# View preprocessing
+idx = -1
+a = [imgs_avg[idx], imgs_corrected[idx], imgs_inv[idx], imgs_thresh[idx], imgs_masked[idx]]
+titles = ["Avg", 'Background correction', 'inverted', 'binarized', 'mask ROI']
 
-for cx, cy, rad in ROIs :
-    #self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
-    xvec, yvec = circle(cx,cy,rad) 
-    xvecs.append(xvec)
-    yvecs.append(yvec)
-    
-    
-
-mask[np.array(yvecs), np.array(xvecs)] = True
-img_masked = img*mask
-#img_masked = mask_ROIs(img, ROIs)
-plt.figure()
-plt.imshow(img_masked, cmap='gray')
+fig, axes = plt.subplots(2,3)
+for i, ax in enumerate(axes.flat):
+    c = ax.imshow(a[i], cmap='gray')
+    fig.colorbar(c, ax = ax)
+    ax.set_title(titles[i])
 
 
 
@@ -152,12 +112,11 @@ signal = mes.signal_perImage(imgs_avg[0], 80) #TODO: FOR LOOP AND DECIDE THRESHO
 
 
 
-#%%
+#%% To save/open the arrays
 #par = np.array([imgs, imgs_avg, NAME_IMG_FOLDER, ROIs, ROI_PATH, IMG_PATH], dtype=object)
 #with open('test.npy', 'wb') as f:
 #    np.save(f, par)
 
-#%%
 with open('./test.npy', 'rb') as f:
     par = np.load(f, allow_pickle=True)
 
@@ -165,7 +124,7 @@ with open('./test.npy', 'rb') as f:
 
 #%% Test
 
-
+######## Testing threshold
 plt.figure()
 plt.imshow(imgs_inv[0], cmap='gray')
 thresholds = [0, 50, 80, 100, 120, 140, 160, 180, 200, 230]
