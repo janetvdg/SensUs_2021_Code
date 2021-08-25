@@ -8,19 +8,26 @@ From saved images taken by SensUs 2021 device (SPR on AU-NHA)
 Created on Sun Aug 22 11:12:06 2021
 
 @author: janet
+
+
+TO-DO: add the last cell to analyse_results_with_connected_components
+check if detects au-np
 """
+
 
 
 import os
 from PIL import Image
 import numpy as np
+import matplotlib.pyplot as plt
 from tkinter import filedialog, Tk
-from processing.processing_functions import temporal_mean_filter, save_imgs, temporal_median_filter, open_images
+from processing.processing_functions import temporal_mean_filter, save_imgs, temporal_median_filter, open_images, binarize_imgs, correct_background, select_ROI
 from analysis.Analyse_results_with_connected_components import Measure
+#from analysis.Select_ROI import execute_roi
 #from AcquireAndSave import execute_capture
 #from AcquireAndDisplay import execute_focus
-from analysis.Select_ROI import execute_roi  #TODO: SOMETIMES THIS DOES NOT WORK
-#from Analyse_results import Measure
+
+
 
 
 
@@ -46,44 +53,201 @@ print('\n Selected image to place ROI ', ROI_PATH)
 
 
 # 3. Opening images in directory folder
-print('hello')
 imgs = open_images(IMG_PATH)
 
 
+ #%%
 
-
- #%% 
-    
 ## SELECT ROI
-RADIUS = 480 # You should't change this
-scale_f = 4 # This you can adapt to your laptop
-image_size = (int(5472/scale_f), int(3648/scale_f))
-small_ROIs = execute_roi(ROI_PATH, image_size, int(RADIUS/scale_f))  # returned as x, y, radius
-ROIs = np.array(small_ROIs)*scale_f  # x, y, radius
-print('ROIs', ROIs)
+ROIs = select_ROI(ROI_PATH)  #TODO: CHECK IT WORKS
+#TODO: close image
 
-  
-#%%  
+
+#%%
 ## PRE-PROCESSING IMAGES
-#1. Temporal average filter
+
+# 1. Temporal average filter: to remove moving objects
 imgs_avg = temporal_mean_filter(imgs, 5)
 #imgs_median = temporal_median_filter(imgs, 5)
 
-#2. Homogenizing incident light to have a flat background: background illumination intensity correction
+# 2. Background illumination intensity correction
+imgs_corrected = []
+for img in imgs_avg:
+    imgs_corrected.append(correct_background(img))
 
-# Saving
-SAVING_FOLDER = os.path.join(IMG_PROCESSED_FOLDER, NAME_IMG_FOLDER) 
-save_imgs(imgs_avg, SAVING_FOLDER, NAME_IMG_FOLDER+'_avg_') # saving in a folder with the name of the original one but inside /images_processed
-#save_imgs(imgs_median, SAVING_FOLDER, NAME_IMG_FOLDER+'_median_')
+# 3. Inverting image (our AU-NP spots will be white ~255)
+imgs_inv = np.invert(imgs_corrected)
 
-
-## ANALYZING IMAGES
-# Add here pipeline to analyse the images
-capture_refresh_time = 2  # TODO!!!!!!!!
-mes = Measure(NAME_IMG_FOLDER, ROIs, capture_refresh_time)
-signal = mes.signal_per_image()
+# 4. Binarizing images: we will have a binary image based on a threshold
+rets, imgs_thresh = binarize_imgs(imgs_inv, tr = 200)   #TODO: FIND THRESHOLD
 
 
+
+
+#%%
+# 5. Applying a mask with the ROIs
+ 
+from skimage.draw import circle
+
+def mask_ROIs(img, ROIs):  #TODO: MAKE IT WORK
+    '''
+    Function that applies a mask to the image using the ROIs
+    input:
+        img: original image (BW)
+        ROIs: array with x, y, radius with size (number_ROIs, 3)
+    output:
+        masked_img: masked image (with black background)
+    '''
+    xvecs = []
+    yvecs = []
+    mask = np.zeros(img.shape)
+    
+    for cx, cy, rad in ROIs :
+        #self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
+        xvec, yvec = circle(cx,cy,rad) 
+        xvecs.append(xvec)
+        yvecs.append(yvec)
+        
+        
+    
+    mask[yvecs, xvecs] = True
+    img_masked = img*mask
+    return img_masked
+
+xvecs = []
+yvecs = []
+mask = np.zeros(img.shape)
+
+for cx, cy, rad in ROIs :
+    #self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
+    xvec, yvec = circle(cx,cy,rad) 
+    xvecs.append(xvec)
+    yvecs.append(yvec)
+    
     
 
+mask[np.array(yvecs), np.array(xvecs)] = True
+img_masked = img*mask
+#img_masked = mask_ROIs(img, ROIs)
+plt.figure()
+plt.imshow(img_masked, cmap='gray')
+
+
+
+#%%
+# Saving
+SAVING_FOLDER = os.path.join(IMG_PROCESSED_FOLDER, NAME_IMG_FOLDER)
+saving = False
+if saving == True :
+    save_imgs(imgs_avg, SAVING_FOLDER, NAME_IMG_FOLDER+'_avg_') # saving in a folder with the name of the original one but inside /images_processed
+    #save_imgs(imgs_median, SAVING_FOLDER, NAME_IMG_FOLDER+'_median_')
+
+
+#%%
+# ANALYZING IMAGES
+#Add here pipeline to analyse the images
+capture_refresh_time = 2  # TODO!!!!!!!!
+mes = Measure(NAME_IMG_FOLDER, ROIs, capture_refresh_time)
+signal = mes.signal_perImage(imgs_avg[0], 80) #TODO: FOR LOOP AND DECIDE THRESHOLD, SAVE THIS IN .CSV
+
+
+
+#%%
+#par = np.array([imgs, imgs_avg, NAME_IMG_FOLDER, ROIs, ROI_PATH, IMG_PATH], dtype=object)
+#with open('test.npy', 'wb') as f:
+#    np.save(f, par)
+
+#%%
+with open('./test.npy', 'rb') as f:
+    par = np.load(f, allow_pickle=True)
+
+[imgs, imgs_avg, NAME_IMG_FOLDER, ROIs, ROI_PATH, IMG_PATH] = list(par)
+
+#%% Test
+
+
+plt.figure()
+plt.imshow(imgs_inv[0], cmap='gray')
+thresholds = [0, 50, 80, 100, 120, 140, 160, 180, 200, 230]
+
+fig, axes = plt.subplots(3,4)
+for i, ax in enumerate(axes.flat):
+    tr = thresholds[i]
+    ret_test, img_thresh_test = cv2.threshold(imgs_inv[-1], tr, 255, cv2.THRESH_BINARY)
+    c = ax.imshow(img_thresh_test, cmap='gray')
+    fig.colorbar(c, ax = ax)
+    ax.set_title('Threshold '+str(tr))
+
+img = img_thresh_test.copy()
+
+circles = ROIs[0]
+spot = []
+
+#plt.figure()
+#plt.imshow(img, cmap='gray')
+
+def find_GNP(img):
+        ''' Function that will compute the connected components and return the number of components
+        between 3-5 pixels TO BE DISCUSSED IF PIXELS CHANGE SIZE WITH PREPROCESSING
+        Connected components of sizes 1 or 2 and above 30 will be disconsidered.
+        
+        returns: 
+            nb_pixels: number of pixels corresponding to AU-NP
+        '''
+        print("shape image in find_GNP")
+        print(img.shape)
+        components = cv2.connectedComponentsWithStats(-1*img, 8, cv2.CV_32S)
+        num_labels = components[0]  # number of labels
+        labels = components[1]      # label matrix, where each pixel in the same connected component gets the same value
+    
+        stats = components[2]       # stat matrix
+        centroids = components[3]   # centroid matrix
+        
+        nb_pixels = 0
+        for c in range(0, num_labels):
+            if c == 0:
+                print("background")
+            else:
+                print("Signal")
+                area = stats[c, cv2.CC_STAT_AREA]
+                
+                if((area>9) & (area<90)): #TODO: before it was 3, 30
+                    nb_pixels = nb_pixels + area 
+                
+        return nb_pixels, labels
+            
+
+#def signal_perImage(img, tr):
+
+spot = []
+connectivity = 8 #changed: connectivity for connected components
+"""
+This function computes the signal given by the AU-NP, as number of pixels.
+We first have a BW image which we threshold to separate the object from the background.
+Then we find the connected components that correspond to the size of the AU-NP
+"""
+
+
+
+for cx, cy, rad in ROIs :
+    #self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
+
+    xvec, yvec = circle(cx,cy,rad) 
+    
+    
+    #S,labs = find_GNP(thresh[circx,circy])
+    S, labs = find_GNP(img[yvec, xvec])  # find AU-NP for the thresholded image, only in the ROIs (remember rows-columns vs x-y order)
+    
+    #plt.imshow(thresh_img[yvec, xvec])
+    
+    print('signal', S)
+    spot.append(S)  #Changed
+            
+#        return spot, labs
+
+
+# To view what there is
+mask = np.zeros(img.shape)
+mask[yvec,xvec]=True
+img_masked = d*mask
 
