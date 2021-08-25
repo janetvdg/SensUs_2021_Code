@@ -1,5 +1,5 @@
 test_preproc/
-images/
-images_processed/
+images/*
+images_processed/*
 !images/.gitkeep
 !images_processed/.gitkeep
