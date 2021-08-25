@@ -8,6 +8,8 @@ Created on Thu Aug 19 17:31:18 2021
 import os
 from PIL import Image
 import numpy as np
+import cv2
+from Select_ROI import execute_roi
 
 #    
 
@@ -36,6 +38,25 @@ def open_images(path):
     return imgs
 
 #files.sort(key=os.path.getctime)
+
+def select_ROI(ROI_PATH, scale_f = 4, RADIUS = 480):
+    """
+    Function to select ROIs
+    input:
+        ROI_PATH: path where the image to which select the ROI is placed
+        radius: radius of the ROI
+        scale_f: scaling, adapt to laptop (to see full screen)
+    output:
+        ROIs: array with x, y, radius of size (num_ROIs, 3)
+        """
+        
+    image_size = (int(5472/scale_f), int(3648/scale_f))
+    small_ROIs = execute_roi(ROI_PATH, image_size, int(RADIUS/scale_f))  # returned as x, y, radius
+    ROIs = np.array(small_ROIs)*scale_f  # x, y, radius
+    print('ROIs', ROIs)
+    
+    return ROIs
+
 
 def temporal_median_filter(imgs, size_kernel):
     """ Temporal median filter
@@ -83,6 +104,47 @@ def temporal_mean_filter(imgs, size_kernel):
             print('Could not compute window with indices '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
     
     return imgs_med
+
+
+
+def binarize_imgs(imgs, tr):
+    '''
+    Binarize images
+    Function to binarize a stack of images using a threshold.
+    input:
+        imgs: array of images of size (x, y, num_images)
+    output:
+        rets: array of thresholds
+        imgs_thresh: binarized images with a threshold
+    '''
+    rets = []
+    imgs_thresh = []
+    for image in imgs:
+        ret, img_thresh = cv2.threshold(image, tr, 255, cv2.THRESH_BINARY)
+        rets.append(ret)
+        imgs_thresh.append(img_thresh)
+    return rets, imgs_thresh
+
+
+def correct_background(img):
+    '''
+    Function to correct the background illumination using
+    Corrected_Image = (Specimen - Darkfield) / (Brightfield - Darkfield) * 255
+    Needs Darkfield.png and Brightfield.png images saved at the main folder
+    input:
+        img: BW image as array
+    output:
+        img_corrected
+    '''
+    path = os.getcwd()  # Working directory needs to be in main folder SensUs_Code_2021
+
+    darkfield = np.array(Image.open(os.path.join("Darkfield.png")))
+    brightfield = np.array(Image.open(os.path.join("Brightfield.png")))
+    specimen = img
+
+    img_corrected = (specimen - darkfield) / (brightfield - darkfield) * 255
+    
+    return img_corrected
 
 
 
@@ -175,7 +237,23 @@ def smooth_background(img, rescale_factor=0.1, poly_deg=[2,2]):
     return background
 
 
+#%%
+import os
+path = os.getcwd()  # Working directory needs to be in main folder SensUs_Code_2021
 
+darkfield = np.array(Image.open(os.path.join("Darkfield.png")))
+brightfield = np.array(Image.open(os.path.join("Brightfield.png")))
+specimen = np.array(Image.open(os.path.join("Specimen.png")))
+
+corrected_img = (specimen - darkfield) / (brightfield - darkfield) * 255
+
+a = [specimen, darkfield, brightfield, corrected_img]
+fig, axes = plt.subplots(2,2)
+for i, ax in enumerate(axes.flat):
+    c = ax.imshow(a[i], cmap='gray')
+    fig.colorbar(c, ax = ax)
+    #ax.set_title('Threshold '+str(tr))
+    #%%
 
 
 #test = imgs[0]
