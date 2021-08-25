@@ -37,6 +37,8 @@ class Measure:
         ''' Function that will compute the connected components and return the number of components
         between 3-5 pixels TO BE DISCUSSED IF PIXELS CHANGE SIZE WITH PREPROCESSING
         Connected components of sizes 1 or 2 and above 30 will be disconsidered
+        
+        An AU-NP is considered as a connected component with size between ????? TODO
         '''
         components = cv2.connectedComponentsWithStats(img, 8, cv2.CV_32S)
         num_labels = components[0]  # number of labels
@@ -45,15 +47,19 @@ class Measure:
         centroids = components[3]   # centroid matrix
         
         nb_pixels = 0
+        print(num_labels,'num_labels')
         
         for c in range(0, num_labels):
             if c == 0:
                 print("background")
             else:
                 ("print not background")
-                area = stats[c, cv2.CC_STAT_AREA]
-                if((area>3) & (area<30)):
-                    nb_pixels = nb_pixels + area 
+                area = stats[c, cv2.CC_STAT_AREA]  # area = amount of pixels in a connected component
+                
+                # In our device (2021) the pixels are 80nm x 80nm  --> 0.8 pix/NP
+                
+                if((area>3) & (area<30)):   #TODO: CHANGE
+                    nb_pixels = nb_pixels + area  # number of pixels that (supposedly) correspond to a AU-NP
                 
         return nb_pixels
             
@@ -63,19 +69,16 @@ class Measure:
         connectivity = 8 #changed: connectivity for connected components
         for cx, cy, rad in self.circles :
             self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
-            # print('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
-            circy, circx = circle(cx,cy,rad) 
-            print("This is x")
-            print(circx)
-            print("This is y")
-            print(circy)
-            #intensity_perSpot = img[circx, circy].mean()
-            #spot.append(np.mean(img[circx,circy] < tr)) # Note that we are counting pixels below threshold
+            xvec, yvec = circle(cx,cy,rad)  #TODO: CHANGE TO DISK, SOME PROBLEMS HERE WITH SIZE
+            intensity_perSpot = img[yvec, xvec].mean()  # Selecting rows and columns means x and y are swapped
+            #spot.append(np.mean(img[yvec, xvec] < tr)) # Note that we are counting pixels below threshold
+            #plt.imshow(img[yvec, xvec] < tr)
             #For this to work we need to binarise the image too
-            spot.append(find_GNP(self, img[circx,circy]))  #Changed
+            spot.append(self.find_GNP(img[yvec, xvec]))  #Changed
+            #plt.imshow(spot)
         
         
-        background = np.sum(np.array(spot[-2:])) #cnaged to sum 
+        background = np.sum(np.array(spot[-2:])) #changed to sum 
         self.log.info(f'background intensity: {background}')
         # print(f'background intensity: {background}')
         foreground = np.sum(np.array(spot[:-2])) #changed to sum 
@@ -90,7 +93,7 @@ class Measure:
            
         
 
-# You get the intensityfrom inside the circles for all the different images
+# You get the intensity from inside the circles for all the different images
 # What does sorted do
     def total_intensity(self):
         #ordered_id = sorted([int(file[4:8]) for file in os.listdir(self.path) \
@@ -133,81 +136,6 @@ class Measure:
         # print('concentration ',concentration)
 
         return slope, concentration
-#%% Test
-import os
-import numpy as np
-import matplotlib.pyplot as plt
-from PIL import Image
-from skimage.draw import circle, circle_perimeter
-from skimage import color
-from skimage.filters import gaussian, threshold_otsu, threshold_minimum, sobel
-from skimage.measure import label, regionprops
-from skimage.morphology import closing, opening, disk, dilation
-from skimage.io import ImageCollection, imread
-from scipy import ndimage
-from logging import getLogger
-
-#Added
-import cv2
-
-circles = np.array([[315, 400, 50]])
-spot = []
-def find_GNP(img):
-        ''' Function that will compute the connected components and return the number of components
-        between 3-5 pixels TO BE DISCUSSED IF PIXELS CHANGE SIZE WITH PREPROCESSING
-        Connected components of sizes 1 or 2 and above 30 will be disconsidered
-        '''
-        print("shape image in find_GNP")
-        print(img.shape)
-        components = cv2.connectedComponentsWithStats(img, 8, cv2.CV_32S)
-        num_labels = components[0]  # number of labels
-        labels = components[1]      # label matrix, where each pixel in the same connected component gets the same value
-    
-        stats = components[2]       # stat matrix
-        centroids = components[3]   # centroid matrix
-        
-        nb_pixels = 0
-        for c in range(0, num_labels):
-            if c == 0:
-                print("background")
-            else:
-                print("Signal")
-                area = stats[c, cv2.CC_STAT_AREA]
-                
-                if((area>3) & (area<30)):
-                    nb_pixels = nb_pixels + area 
-                
-        return nb_pixels, labels
-            
-
-def signal_perImage(img,tr):
-
-        spot = []
-        labs = []
-        thresh = []
-        connectivity = 8 #changed: connectivity for connected components
-        for cx, cy, rad in circles :
-            #self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
-            # print('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
-            circy, circx = circle(cx,cy,rad) 
-            # print("This is x")
-            # print(circx)
-            # print("This is y")
-            # print(circy)
-            #intensity_perSpot = img[circx, circy].mean()
-            #spot.append(np.mean(img[circx,circy] < tr)) # Note that we are counting pixels below threshold
-            #For this to work we need to binarise the image too
-            ret, thresh = cv2.threshold(img,tr,255,cv2.THRESH_BINARY)
-            thresh = thresh[:,:,0]
-            print("Shape threshold")
-            print(thresh.shape)
-            print("")
-            #S,labs = find_GNP(thresh[circx,circy])
-            S,labs = find_GNP(thresh)
-            print(S)
-            spot.append(S)  #Changed
-            
-        return spot, labs
 
 
 #%%
