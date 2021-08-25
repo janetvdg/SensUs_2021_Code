@@ -1,2 +1,8 @@
-python
-cv2
+#python
+#cv2
+#pillow
+#image
+#scikit-image
+#tkinter
+#numpy
+#matplotlib
