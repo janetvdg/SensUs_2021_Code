@@ -40,7 +40,7 @@ def click_event(event, x, y, flags, params):
        
 def print_ROI(temp, circles):
     for circle in circles:
-        cv2.circle(temp, center=circle[:2], radius=circle[2],
+        cv2.circle(temp, center=tuple(circle[:2]), radius=circle[2],
                    color=(255,255,0), thickness=2)
     cv2.imshow('image', temp)
     
