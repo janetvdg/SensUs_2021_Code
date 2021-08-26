@@ -12,9 +12,14 @@ Created on Sun Aug 22 11:12:06 2021
 
 """
 
-
-
+import sys 
 import os
+
+path_code = os.path.dirname(__file__)
+
+#important to import file that are not here
+sys.path.append(os.path.abspath(path_code))
+
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
@@ -24,7 +29,6 @@ from analysis.Analyse_results_with_connected_components import Measure
 #from analysis.Select_ROI import execute_roi
 #from AcquireAndSave import execute_capture
 #from AcquireAndDisplay import execute_focus
-
 
 
 #%%
@@ -38,7 +42,7 @@ IMG_PROCESSED_FOLDER = os.path.abspath('images_processed')  #Folder where the re
 # 1. Select folder with images
 root = Tk()
 root.withdraw()
-IMG_PATH = os.path.abspath(filedialog.askdirectory(title='Select Folder with images to be analyzed', initialdir = IMG_FOLDER))
+IMG_PATH = os.path.abspath(filedialog.askdirectory( title='Select Folder with images to be analyzed', initialdir = IMG_FOLDER))
 print('\n Files to be processed in ', IMG_PATH)
 NAME_IMG_FOLDER = os.path.basename(IMG_PATH)
 
@@ -55,7 +59,7 @@ print('Shape imgs', np.shape(imgs))
 framerate = np.mean(np.diff(time_creation))
 os.chdir(ORIGINAL_FOLDER)
 
- #%%
+#%%
 
 ## SELECT ROI
 ROIs = select_ROI(ROI_PATH) 

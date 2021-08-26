@@ -67,7 +67,7 @@ def select_ROI(ROI_PATH, scale_f = 4, RADIUS = 480):
     image_size = (int(5472/scale_f), int(3648/scale_f))
     small_ROIs = execute_roi(ROI_PATH, image_size, int(RADIUS/scale_f))  # returned as x, y, radius
     ROIs = np.array(small_ROIs)*scale_f  # x, y, radius
-    print('ROIs', ROIs)
+    print('ROIs:\n', ROIs)
     
     return ROIs
 
