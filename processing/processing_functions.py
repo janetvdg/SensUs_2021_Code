@@ -207,7 +207,6 @@ def mask_ROIs(imgs, ROIs):  #TODO: MAKE IT WORK
     xvecs = []
     yvecs = []
     imgs_masked = []
-    print('imgs[0].shape', imgs[0].shape)
     mask = np.zeros(imgs[0].shape)
     
     for cx, cy, rad in ROIs :

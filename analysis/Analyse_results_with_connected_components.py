@@ -16,8 +16,6 @@ from skimage.morphology import closing, opening, disk, dilation
 from skimage.io import ImageCollection, imread
 from scipy import ndimage
 from logging import getLogger
-
-#Added
 import cv2
 
 
@@ -45,6 +43,7 @@ class Measure:
         '''
         print("shape image in find_GNP")
         print(img.shape)
+        image = Image.fromarray(img, 'L')
         components = cv2.connectedComponentsWithStats(img, 8, cv2.CV_32S)
         num_labels = components[0]  # number of labels
         labels = components[1]      # label matrix, where each pixel in the same connected component gets the same value
@@ -72,7 +71,7 @@ class Measure:
         for cx, cy, rad in self.circles :
             self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
             xvec, yvec = circle(cx, cy, rad)  #TODO: CHANGE TO DISK, SOME PROBLEMS HERE WITH SIZE
-            S, labels = self.find_GNP(img[yvec, xvec])
+            S, labels = self.find_GNP(img)   #img[yvec, xvec])
             spot.append(S)  #Changed
         
         

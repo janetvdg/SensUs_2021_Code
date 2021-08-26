@@ -64,23 +64,24 @@ ROIs = select_ROI(ROI_PATH)
 
 #%%
 ## PRE-PROCESSING IMAGES
-print('imgs', np.shape(imgs))
+print('Original images shape: ', np.shape(imgs))
+
 # 1. Temporal average filter: to remove moving objects
 imgs_avg = temporal_mean_filter(imgs, 5)
-print('imgs_avg', np.shape(imgs_avg))
+print('Averaged images shape: ', np.shape(imgs_avg))
 #imgs_median = temporal_median_filter(imgs, 5)
 
 # 2. Background illumination intensity correction
 imgs_corrected = correct_background(imgs_avg, ORIGINAL_FOLDER)
-print('imgs_corrected', np.shape(imgs_corrected))
+print('Corrected images shape: ', np.shape(imgs_corrected))
 
 # 3. Inverting image (our AU-NP spots will be white ~255)
 imgs_inv = invert_imgs(imgs_corrected)
-print('imgs_inv', np.shape(imgs_inv))
+print('Inverted images shape: ', np.shape(imgs_inv))
 
 # 4. Applying a mask with the ROIs
-print('np.shape(imgs_inv)', np.shape(imgs_inv))
 imgs_masked = mask_ROIs(imgs_inv, ROIs)
+print('Masked images shape: ', np.shape(imgs_masked))
     
 # 5. Binarizing images: we will have a binary image based on a threshold
 rets, imgs_thresh = binarize_imgs(imgs_masked, tr = 180)   #TODO: FIND THRESHOLD
@@ -101,6 +102,7 @@ for i, ax in enumerate(axes.flat):
         ax.set_title(titles[i])
     except:
         continue
+plt.show()
 
 
 #%%
@@ -108,7 +110,8 @@ for i, ax in enumerate(axes.flat):
 #Add here pipeline to analyse the images
 capture_refresh_time = framerate  # TODO
 mes = Measure(NAME_IMG_FOLDER, ROIs, capture_refresh_time)
-signal = mes.signal_perImage(imgs_masked[0]) #TODO: FOR LOOP AND DECIDE THRESHOLD, SAVE THIS IN .CSV
+signal = mes.signal_perImage(imgs_thresh[0]) #TODO: FOR LOOP AND DECIDE THRESHOLD, SAVE THIS IN .CSV
+#WARNING: THIS GIVES AN ERROR THAT I THINK COMES FROM BINARIZING BEFORE
 
 
 
