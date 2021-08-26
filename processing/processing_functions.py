@@ -85,7 +85,7 @@ def temporal_median_filter(imgs, size_kernel):
     print('\n Computing temporal median filter with kernel size ', size_kernel, '...')
     imgs_med = []
    
-    for i in np.arange(0, len(imgs)//size_kernel-size_kernel) :  
+    for i in np.arange(0, len(imgs)//size_kernel) :  
         try:
             seq = np.stack(imgs[i*(size_kernel+1):(size_kernel*(i+1)+i)], axis = 2)  #TODO: use last images as well
             batch = np.median(seq, axis = 2).astype(np.uint8)
@@ -108,20 +108,21 @@ def temporal_mean_filter(imgs, size_kernel):
     print('\n Computing temporal average filter with kernel size ', size_kernel, '...')
     imgs_med = []
     
-    for i in np.arange(0, len(imgs)//size_kernel-size_kernel) :
+    for i in np.arange(0, len(imgs)//size_kernel) :
         print('Computing window from '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
         try: 
             seq = np.stack(imgs[i*(size_kernel+1):(size_kernel*(i+1)+i)], axis = 2)  #TODO: use last images as well
             batch = np.mean(seq, axis = 2).astype(np.uint8)
             imgs_med.append(batch)
         except:
+            print('Number of images = '+str(len(imgs)))
             print('Could not compute window with indices '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
     
     return imgs_med
 
 
 
-def correct_background(imgs):
+def correct_background(imgs, path):
     '''
     Function to correct the background illumination using
     Corrected_Image = (Specimen - Darkfield) / (Brightfield - Darkfield) * 255
@@ -134,7 +135,8 @@ def correct_background(imgs):
     
     imgs_corrected = []
     #TODO: THIS WAY IS NOT THE BEST TO GET THE WORKING DIRECTORY, SOMETIMES IT DOES NOT WORK
-    path = os.path.dirname(os.path.realpath('processing_functions.py'))  # Working directory needs to be in main folder SensUs_Code_2021
+    #path = os.path.dirname(os.path.realpath('processing_functions.py'))  # Working directory needs to be in main folder SensUs_Code_2021
+    os.chdir(path)
     darkfield = np.array(Image.open(os.path.join("Darkfield.png")))
     brightfield = np.array(Image.open(os.path.join("Brightfield.png")))
     
@@ -205,6 +207,7 @@ def mask_ROIs(imgs, ROIs):  #TODO: MAKE IT WORK
     xvecs = []
     yvecs = []
     imgs_masked = []
+    print('imgs[0].shape', imgs[0].shape)
     mask = np.zeros(imgs[0].shape)
     
     for cx, cy, rad in ROIs :

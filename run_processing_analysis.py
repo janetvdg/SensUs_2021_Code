@@ -27,11 +27,10 @@ from analysis.Analyse_results_with_connected_components import Measure
 
 
 
-
-
-
 #%%
 ## OPENING FILES
+ORIGINAL_FOLDER = os.path.dirname(os.path.realpath(__file__))
+print('THIS IS ORIGINAL FOLDER PATH', str(ORIGINAL_FOLDER))
 IMG_FOLDER = os.path.join('images') #Folder where the images taken by the camera to be processed will be located
 IMG_PROCESSED_FOLDER = os.path.abspath('images_processed')  #Folder where the resulting images will be located
 
@@ -52,7 +51,9 @@ print('\n Selected image to place ROI ', ROI_PATH)
 
 # 3. Loading images in directory folder
 imgs, time_creation = open_images(IMG_PATH)
+print('Shape imgs', np.shape(imgs))
 framerate = np.mean(np.diff(time_creation))
+os.chdir(ORIGINAL_FOLDER)
 
  #%%
 
@@ -63,18 +64,22 @@ ROIs = select_ROI(ROI_PATH)
 
 #%%
 ## PRE-PROCESSING IMAGES
-
+print('imgs', np.shape(imgs))
 # 1. Temporal average filter: to remove moving objects
 imgs_avg = temporal_mean_filter(imgs, 5)
+print('imgs_avg', np.shape(imgs_avg))
 #imgs_median = temporal_median_filter(imgs, 5)
 
 # 2. Background illumination intensity correction
-imgs_corrected = correct_background(imgs_avg)
+imgs_corrected = correct_background(imgs_avg, ORIGINAL_FOLDER)
+print('imgs_corrected', np.shape(imgs_corrected))
 
 # 3. Inverting image (our AU-NP spots will be white ~255)
 imgs_inv = invert_imgs(imgs_corrected)
+print('imgs_inv', np.shape(imgs_inv))
 
 # 4. Applying a mask with the ROIs
+print('np.shape(imgs_inv)', np.shape(imgs_inv))
 imgs_masked = mask_ROIs(imgs_inv, ROIs)
     
 # 5. Binarizing images: we will have a binary image based on a threshold
