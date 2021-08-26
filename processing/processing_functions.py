@@ -16,14 +16,23 @@ from skimage.draw import circle
 
 def open_images(path):
     """
-    Opening images
+    Loading images
+    
+    It also gets the time of creation of the files in order to compute the frame rate afterwards. 
+    CAREFUL! Sometimes this might change if you move the file to another folder or computer.
+    
+    input:
+        path: directory where the files are located
+    output:
+        imgs: list of images
+        time_creation: list of dates of creation of the files
     """
     
     imgs = [] # list with all the images (jpg or png)
+    time_creation = [] # list with the time of creation of each image
     #parent = os.getcwd()
     #path = os.path.join(parent, PATH)
-    print('\n Opening images '+str(path)+'...')
-    #for filename in os.listdir(directory):
+    print('\n Opening images '+str(path)+' ...')
     
     os.chdir(path)  #TODO: NOT SURE ABOUT THIS
     files = sorted(filter(os.path.isfile, os.listdir(path)), key=os.path.getctime)  # ordering the images by date of creation
@@ -32,13 +41,15 @@ def open_images(path):
     #for filename in sorted(os.listdir(path)):
         if filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg'):
             img_path = os.path.join(path, filename)
+            time_creation.append(os.stat(filename).st_ctime)
             #print(img_path)
             img = np.array(Image.open(img_path))
             imgs.append(img) #appending the image to the list
             
         else:
             continue
-    return imgs
+        
+    return imgs, time_creation
 
 #files.sort(key=os.path.getctime)
 
@@ -74,7 +85,7 @@ def temporal_median_filter(imgs, size_kernel):
     print('\n Computing temporal median filter with kernel size ', size_kernel, '...')
     imgs_med = []
    
-    for i in np.arange(0, len(imgs)//size_kernel-size_kernel) :  
+    for i in np.arange(0, len(imgs)//size_kernel) :  
         try:
             seq = np.stack(imgs[i*(size_kernel+1):(size_kernel*(i+1)+i)], axis = 2)  #TODO: use last images as well
             batch = np.median(seq, axis = 2).astype(np.uint8)
@@ -97,20 +108,21 @@ def temporal_mean_filter(imgs, size_kernel):
     print('\n Computing temporal average filter with kernel size ', size_kernel, '...')
     imgs_med = []
     
-    for i in np.arange(0, len(imgs)//size_kernel-size_kernel) :
+    for i in np.arange(0, len(imgs)//size_kernel) :
         print('Computing window from '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
         try: 
             seq = np.stack(imgs[i*(size_kernel+1):(size_kernel*(i+1)+i)], axis = 2)  #TODO: use last images as well
             batch = np.mean(seq, axis = 2).astype(np.uint8)
             imgs_med.append(batch)
         except:
+            print('Number of images = '+str(len(imgs)))
             print('Could not compute window with indices '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
     
     return imgs_med
 
 
 
-def correct_background(imgs):
+def correct_background(imgs, path):
     '''
     Function to correct the background illumination using
     Corrected_Image = (Specimen - Darkfield) / (Brightfield - Darkfield) * 255
@@ -123,7 +135,8 @@ def correct_background(imgs):
     
     imgs_corrected = []
     #TODO: THIS WAY IS NOT THE BEST TO GET THE WORKING DIRECTORY, SOMETIMES IT DOES NOT WORK
-    path = os.path.dirname(os.path.realpath('processing_functions.py'))  # Working directory needs to be in main folder SensUs_Code_2021
+    #path = os.path.dirname(os.path.realpath('processing_functions.py'))  # Working directory needs to be in main folder SensUs_Code_2021
+    os.chdir(path)
     darkfield = np.array(Image.open(os.path.join("Darkfield.png")))
     brightfield = np.array(Image.open(os.path.join("Brightfield.png")))
     
