@@ -12,9 +12,14 @@ Created on Sun Aug 22 11:12:06 2021
 
 """
 
-
-
+import sys 
 import os
+
+path_code = os.path.dirname(__file__)
+
+#important to import file that are not here
+sys.path.append(os.path.abspath(path_code))
+
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
@@ -29,9 +34,8 @@ from analysis.Analyse_results_with_connected_components import Measure
 
 
 
-
 #%%
-## OPENING FILES
+
 IMG_FOLDER = os.path.join('images') #Folder where the images taken by the camera to be processed will be located
 IMG_PROCESSED_FOLDER = os.path.abspath('images_processed')  #Folder where the resulting images will be located
 
@@ -39,7 +43,7 @@ IMG_PROCESSED_FOLDER = os.path.abspath('images_processed')  #Folder where the re
 # 1. Select folder with images
 root = Tk()
 root.withdraw()
-IMG_PATH = os.path.abspath(filedialog.askdirectory(title='Select Folder with images to be analyzed', initialdir = IMG_FOLDER))
+IMG_PATH = os.path.abspath(filedialog.askdirectory( title='Select Folder with images to be analyzed', initialdir = IMG_FOLDER))
 print('\n Files to be processed in ', IMG_PATH)
 NAME_IMG_FOLDER = os.path.basename(IMG_PATH)
 
@@ -54,7 +58,7 @@ print('\n Selected image to place ROI ', ROI_PATH)
 imgs = open_images(IMG_PATH)
 
 
- #%%
+#%%
 
 ## SELECT ROI
 ROIs = select_ROI(ROI_PATH) 
