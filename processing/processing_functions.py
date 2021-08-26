@@ -16,14 +16,23 @@ from skimage.draw import circle
 
 def open_images(path):
     """
-    Opening images
+    Loading images
+    
+    It also gets the time of creation of the files in order to compute the frame rate afterwards. 
+    CAREFUL! Sometimes this might change if you move the file to another folder or computer.
+    
+    input:
+        path: directory where the files are located
+    output:
+        imgs: list of images
+        time_creation: list of dates of creation of the files
     """
     
     imgs = [] # list with all the images (jpg or png)
+    time_creation = [] # list with the time of creation of each image
     #parent = os.getcwd()
     #path = os.path.join(parent, PATH)
-    print('\n Opening images '+str(path)+'...')
-    #for filename in os.listdir(directory):
+    print('\n Opening images '+str(path)+' ...')
     
     os.chdir(path)  #TODO: NOT SURE ABOUT THIS
     files = sorted(filter(os.path.isfile, os.listdir(path)), key=os.path.getctime)  # ordering the images by date of creation
@@ -32,13 +41,15 @@ def open_images(path):
     #for filename in sorted(os.listdir(path)):
         if filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg'):
             img_path = os.path.join(path, filename)
+            time_creation.append(os.stat(filename).st_ctime)
             #print(img_path)
             img = np.array(Image.open(img_path))
             imgs.append(img) #appending the image to the list
             
         else:
             continue
-    return imgs
+        
+    return imgs, time_creation
 
 #files.sort(key=os.path.getctime)
 

@@ -65,10 +65,10 @@ class Measure:
         return nb_pixels, labels
             
     
-    def signal_perImage(self, img, tr):
+    def signal_perImage(self, img):
 
         spot = []
-        connectivity = 8 #changed: connectivity for connected components
+        connectivity = 8 #connectivity for connected components
         for cx, cy, rad in self.circles :
             self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
             xvec, yvec = circle(cx, cy, rad)  #TODO: CHANGE TO DISK, SOME PROBLEMS HERE WITH SIZE
