@@ -14,12 +14,6 @@ Created on Sun Aug 22 11:12:06 2021
 
 import sys 
 import os
-
-path_code = os.path.dirname(__file__)
-
-#important to import file that are not here
-sys.path.append(os.path.abspath(path_code))
-
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
@@ -91,7 +85,7 @@ print('Masked images shape: ', np.shape(imgs_masked))
 rets, imgs_thresh = binarize_imgs(imgs_masked, tr = 180)   #TODO: FIND THRESHOLD
 
 
-
+print('hola1')
 
 # View preprocessing
 idx = -1
@@ -106,15 +100,20 @@ for i, ax in enumerate(axes.flat):
         ax.set_title(titles[i])
     except:
         continue
-plt.show()
 
+
+print('hola2')
 
 #%%
 # ANALYZING IMAGES
 #Add here pipeline to analyse the images
+
 capture_refresh_time = framerate  # TODO
+print('hola3')
 mes = Measure(NAME_IMG_FOLDER, ROIs, capture_refresh_time)
+print('hola4')
 signal = mes.signal_perImage(imgs_thresh[0]) #TODO: FOR LOOP AND DECIDE THRESHOLD, SAVE THIS IN .CSV
+print('hola5')
 #WARNING: THIS GIVES AN ERROR THAT I THINK COMES FROM BINARIZING BEFORE
 
 

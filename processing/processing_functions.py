@@ -168,8 +168,8 @@ def binarize_imgs(imgs, tr):
     print('Binarizing images...')
     rets = []
     imgs_thresh = []
-    for image in imgs:
-        ret, img_thresh = cv2.threshold(image, tr, 255, cv2.THRESH_BINARY)
+    for img in imgs:
+        ret, img_thresh = cv2.threshold(img, tr, 255, cv2.THRESH_BINARY)
         imgs_thresh.append(img_thresh)
         rets.append(ret)
     return rets, imgs_thresh
