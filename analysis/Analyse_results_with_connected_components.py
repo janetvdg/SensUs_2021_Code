@@ -98,7 +98,7 @@ class Measure:
         print('foreground', foreground)
         print('spot', spot)
         Signal = foreground/background * 100
-        return Signal
+        return Signal, foreground, background
     
            
         

@@ -111,31 +111,31 @@ print('Masked images shape: ', np.shape(imgs_masked))
 
 #%%
 # ANALYZING IMAGES
-#Add here pipeline to analyse the images
-        
-    # until imgs_inv it works
-    #it starts not working in imgs_masked
-    
-    #thresh works if in front of masked
-
-img_test = imgs_thresh[0]
-img_test_Image = Image.fromarray(img_test, 'L')
-print(type(imgs_thresh[0]))
-print(type(img_test_Image))
-
 capture_refresh_time = framerate  # TODO
 mes = Measure(NAME_IMG_FOLDER, ROIs, capture_refresh_time)
 signal = mes.signal_perImage(img_test) #TODO: FOR LOOP AND DECIDE THRESHOLD, SAVE THIS IN .CSV
 print('final signal', signal)
-#WARNING: THIS GIVES AN ERROR THAT I THINK COMES FROM BINARIZING BEFORE
 
 signal = []
-for img in imgs_thresh:
-    signal.append(mes.signal_perImage(img))
+foreground = []
+background = []
 
-time = np.array(0, len(signal)*framerate, framerate)
+for img in imgs_thresh:
+    result = mes.signal_perImage(img)
+    signal = result[0]
+    foreground = result[1]
+    background = result[2]
+    print('final signal', signal)
+
+# Saving result in npy and csv
+with open('result.npy', 'wb') as f:
+    np.save(f, result)
+np.savetxt("result.csv", result)
+    
+    
 
 plt.figure()
+time = np.arange(0, len(signal)*framerate, framerate)
 plt.plot(time, signal)
 plt.show()
 
@@ -143,7 +143,7 @@ plt.show()
 #%%
 # Saving
 SAVING_FOLDER = os.path.join(IMG_PROCESSED_FOLDER, NAME_IMG_FOLDER)
-saving = False
+saving = True
 if saving == True :
     save_imgs(imgs_avg, SAVING_FOLDER, NAME_IMG_FOLDER+'_avg_') # saving in a folder with the name of the original one but inside /images_processed
     #save_imgs(imgs_median, SAVING_FOLDER, NAME_IMG_FOLDER+'_median_')
