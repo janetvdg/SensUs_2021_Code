@@ -76,7 +76,7 @@ print('Averaged images shape: ', np.shape(imgs_avg))
 #imgs_median = temporal_median_filter(imgs, 5)
 
 # 2. Background illumination intensity correction
-imgs_corrected = correct_background(imgs_avg, ORIGINAL_FOLDER)
+imgs_corrected = correct_background(imgs, ORIGINAL_FOLDER)  #TODO: WARNING IMGS_AVG
 print('Corrected images shape: ', np.shape(imgs_corrected))
 
 # 3. Inverting image (our AU-NP spots will be white ~255)
@@ -84,8 +84,8 @@ imgs_inv = invert_imgs(imgs_corrected)
 print('Inverted images shape: ', np.shape(imgs_inv))
 
 # 4. Binarizing images: we will have a binary image based on a threshold
-rets, imgs_thresh = binarize_imgs(imgs_inv, tr = 180)   #TODO: FIND THRESHOLD
-
+rets, imgs_thresh = binarize_imgs(imgs_inv, tr = 130)   #TODO: FIND THRESHOLD
+print('Thresholded images shape: ', np.shape(imgs_thresh))
 
 # 5. Applying a mask with the ROIs
 imgs_masked = mask_ROIs(imgs_thresh, ROIs)
@@ -94,19 +94,19 @@ print('Masked images shape: ', np.shape(imgs_masked))
 
 
 # View preprocessing
-idx = -1
-a = [imgs_avg[idx], imgs_corrected[idx], imgs_inv[idx], imgs_thresh[idx], imgs_masked[idx]]
-titles = ["Avg", 'Background correction', 'inverted','binarized', 'mask ROI']
-
-fig, axes = plt.subplots(2,3)
-for i, ax in enumerate(axes.flat):
-    try:
-        c = ax.imshow(a[i], cmap='gray')
-        fig.colorbar(c, ax = ax)
-        ax.set_title(titles[i])
-    except:
-        continue
-plt.show()
+#idx = -1
+#a = [imgs_avg[idx], imgs_corrected[idx], imgs_inv[idx], imgs_thresh[idx], imgs_masked[idx]]
+#titles = ["Avg", 'Background correction', 'inverted','binarized', 'mask ROI']
+#
+#fig, axes = plt.subplots(2,3)
+#for i, ax in enumerate(axes.flat):
+#    try:
+#        c = ax.imshow(a[i], cmap='gray')
+#        fig.colorbar(c, ax = ax)
+#        ax.set_title(titles[i])
+#    except:
+#        continue
+#plt.show()
 
 
 #%%
@@ -129,8 +129,15 @@ signal = mes.signal_perImage(img_test) #TODO: FOR LOOP AND DECIDE THRESHOLD, SAV
 print('final signal', signal)
 #WARNING: THIS GIVES AN ERROR THAT I THINK COMES FROM BINARIZING BEFORE
 
+signal = []
+for img in imgs_thresh:
+    signal.append(mes.signal_perImage(img))
 
+time = np.array(0, len(signal)*framerate, framerate)
 
+plt.figure()
+plt.plot(time, signal)
+plt.show()
 
 
 #%%
@@ -157,10 +164,11 @@ if open_saved_data == True:
 #%% Test
 
 ######## Testing threshold
+
 #plt.figure()
 #plt.imshow(imgs_inv[0], cmap='gray')
-#thresholds = [0, 50, 80, 100, 120, 140, 160, 180, 200, 230]
-#
+#thresholds = [175, 180, 185, 190, 195, 200, 205, 210, 215, 220, 225, 230]
+#import cv2
 #fig, axes = plt.subplots(3,4)
 #for i, ax in enumerate(axes.flat):
 #    tr = thresholds[i]
@@ -168,6 +176,9 @@ if open_saved_data == True:
 #    c = ax.imshow(img_thresh_test, cmap='gray')
 #    fig.colorbar(c, ax = ax)
 #    ax.set_title('Threshold '+str(tr))
+#
+#plt.show()
+    
 #
 #img = img_thresh_test.copy()
 #

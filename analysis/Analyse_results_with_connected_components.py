@@ -66,6 +66,7 @@ class Measure:
         percent_pixels = nb_pixels /len(img)
         print('Number of pixels detected: ', nb_pixels)
         print('Percentage of pixels detected: ', percent_pixels*100, '%')
+        print('lenimg',len(img))
         
         return nb_pixels, percent_pixels, labels
             
