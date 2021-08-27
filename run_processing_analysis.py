@@ -15,10 +15,10 @@ Created on Sun Aug 22 11:12:06 2021
 import sys 
 import os
 
-path_code = os.path.dirname(__file__)
+#path_code = os.path.dirname(__file__)
 
 #important to import file that are not here
-sys.path.append(os.path.abspath(path_code))
+#sys.path.append(os.path.abspath(path_code))
 
 from PIL import Image
 import numpy as np
@@ -76,90 +76,114 @@ print('Averaged images shape: ', np.shape(imgs_avg))
 #imgs_median = temporal_median_filter(imgs, 5)
 
 # 2. Background illumination intensity correction
-imgs_corrected = correct_background(imgs_avg, ORIGINAL_FOLDER)
+imgs_corrected = correct_background(imgs, ORIGINAL_FOLDER)  #TODO: WARNING IMGS_AVG
 print('Corrected images shape: ', np.shape(imgs_corrected))
 
 # 3. Inverting image (our AU-NP spots will be white ~255)
 imgs_inv = invert_imgs(imgs_corrected)
 print('Inverted images shape: ', np.shape(imgs_inv))
 
-# 4. Applying a mask with the ROIs
-imgs_masked = mask_ROIs(imgs_inv, ROIs)
-print('Masked images shape: ', np.shape(imgs_masked))
-    
-# 5. Binarizing images: we will have a binary image based on a threshold
-rets, imgs_thresh = binarize_imgs(imgs_masked, tr = 180)   #TODO: FIND THRESHOLD
+# 4. Binarizing images: we will have a binary image based on a threshold
+rets, imgs_thresh = binarize_imgs(imgs_inv, tr = 130)   #TODO: FIND THRESHOLD
+print('Thresholded images shape: ', np.shape(imgs_thresh))
 
-
+# 5. Applying a mask with the ROIs
+#imgs_masked = mask_ROIs(imgs_thresh, ROIs)
+#print('Masked images shape: ', np.shape(imgs_masked))
+# TODO: NOT USING IT FOR THE MOMENT
 
 
 # View preprocessing
-idx = -1
-a = [imgs_avg[idx], imgs_corrected[idx], imgs_inv[idx], imgs_masked[idx], imgs_thresh[idx]]
-titles = ["Avg", 'Background correction', 'inverted','mask ROI',  'binarized']
-
-fig, axes = plt.subplots(2,3)
-for i, ax in enumerate(axes.flat):
-    try:
-        c = ax.imshow(a[i], cmap='gray')
-        fig.colorbar(c, ax = ax)
-        ax.set_title(titles[i])
-    except:
-        continue
-plt.show()
+#idx = -1
+#a = [imgs_avg[idx], imgs_corrected[idx], imgs_inv[idx], imgs_thresh[idx], imgs_masked[idx]]
+#titles = ["Avg", 'Background correction', 'inverted','binarized', 'mask ROI']
+#
+#fig, axes = plt.subplots(2,3)
+#for i, ax in enumerate(axes.flat):
+#    try:
+#        c = ax.imshow(a[i], cmap='gray')
+#        fig.colorbar(c, ax = ax)
+#        ax.set_title(titles[i])
+#    except:
+#        continue
+#plt.show()
 
 
 #%%
 # ANALYZING IMAGES
-#Add here pipeline to analyse the images
 capture_refresh_time = framerate  # TODO
 mes = Measure(NAME_IMG_FOLDER, ROIs, capture_refresh_time)
-signal = mes.signal_perImage(imgs_thresh[0]) #TODO: FOR LOOP AND DECIDE THRESHOLD, SAVE THIS IN .CSV
-#WARNING: THIS GIVES AN ERROR THAT I THINK COMES FROM BINARIZING BEFORE
+signal = mes.signal_perImage(img_test) #TODO: FOR LOOP AND DECIDE THRESHOLD, SAVE THIS IN .CSV
+print('final signal', signal)
 
+signal = []
+foreground = []
+background = []
 
+for img in imgs_thresh:
+    result = mes.signal_perImage(img)
+    signal = result[0]
+    foreground = result[1]
+    background = result[2]
+    print('final signal', signal)
 
+# Saving result in npy and csv
+with open('result.npy', 'wb') as f:
+    np.save(f, result)
+np.savetxt("result.csv", result)
+    
+    
+
+plt.figure()
+time = np.arange(0, len(signal)*framerate, framerate)
+plt.plot(time, signal)
+plt.show()
 
 
 #%%
 # Saving
 SAVING_FOLDER = os.path.join(IMG_PROCESSED_FOLDER, NAME_IMG_FOLDER)
-saving = False
+saving = True
 if saving == True :
     save_imgs(imgs_avg, SAVING_FOLDER, NAME_IMG_FOLDER+'_avg_') # saving in a folder with the name of the original one but inside /images_processed
     #save_imgs(imgs_median, SAVING_FOLDER, NAME_IMG_FOLDER+'_median_')
 
 
 
-#%% To save/open the arrays
+#%% To save/open the arrays (because my computer is too slow)
 #par = np.array([imgs, imgs_avg, NAME_IMG_FOLDER, ROIs, ROI_PATH, IMG_PATH], dtype=object)
 #with open('test.npy', 'wb') as f:
 #    np.save(f, par)
 
-with open('./test.npy', 'rb') as f:
-    par = np.load(f, allow_pickle=True)
-
-[imgs, imgs_avg, NAME_IMG_FOLDER, ROIs, ROI_PATH, IMG_PATH] = list(par)
+open_saved_data = False
+if open_saved_data == True:
+    with open('./test.npy', 'rb') as f:
+        par = np.load(f, allow_pickle=True)
+    [imgs, imgs_avg, NAME_IMG_FOLDER, ROIs, ROI_PATH, IMG_PATH] = list(par)
 
 #%% Test
 
 ######## Testing threshold
-plt.figure()
-plt.imshow(imgs_inv[0], cmap='gray')
-thresholds = [0, 50, 80, 100, 120, 140, 160, 180, 200, 230]
 
-fig, axes = plt.subplots(3,4)
-for i, ax in enumerate(axes.flat):
-    tr = thresholds[i]
-    ret_test, img_thresh_test = cv2.threshold(imgs_inv[-1], tr, 255, cv2.THRESH_BINARY)
-    c = ax.imshow(img_thresh_test, cmap='gray')
-    fig.colorbar(c, ax = ax)
-    ax.set_title('Threshold '+str(tr))
-
-img = img_thresh_test.copy()
-
-circles = ROIs[0]
-spot = []
+#plt.figure()
+#plt.imshow(imgs_inv[0], cmap='gray')
+#thresholds = [175, 180, 185, 190, 195, 200, 205, 210, 215, 220, 225, 230]
+#import cv2
+#fig, axes = plt.subplots(3,4)
+#for i, ax in enumerate(axes.flat):
+#    tr = thresholds[i]
+#    ret_test, img_thresh_test = cv2.threshold(imgs_inv[-1], tr, 255, cv2.THRESH_BINARY)
+#    c = ax.imshow(img_thresh_test, cmap='gray')
+#    fig.colorbar(c, ax = ax)
+#    ax.set_title('Threshold '+str(tr))
+#
+#plt.show()
+    
+#
+#img = img_thresh_test.copy()
+#
+#circles = ROIs[0]
+#spot = []
 
 #plt.figure()
 #plt.imshow(img, cmap='gray')
