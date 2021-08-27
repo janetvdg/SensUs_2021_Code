@@ -88,8 +88,8 @@ rets, imgs_thresh = binarize_imgs(imgs_inv, tr = 130)   #TODO: FIND THRESHOLD
 print('Thresholded images shape: ', np.shape(imgs_thresh))
 
 # 5. Applying a mask with the ROIs
-imgs_masked = mask_ROIs(imgs_thresh, ROIs)
-print('Masked images shape: ', np.shape(imgs_masked))
+#imgs_masked = mask_ROIs(imgs_thresh, ROIs)
+#print('Masked images shape: ', np.shape(imgs_masked))
 # TODO: NOT USING IT FOR THE MOMENT
 
 
