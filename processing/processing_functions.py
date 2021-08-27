@@ -28,7 +28,7 @@ def open_images(path):
         time_creation: list of dates of creation of the files
     """
     
-    imgs = [] # list with all the images (jpg or png)
+
     time_creation = [] # list with the time of creation of each image
     #parent = os.getcwd()
     #path = os.path.join(parent, PATH)
@@ -37,14 +37,16 @@ def open_images(path):
     os.chdir(path)  #TODO: NOT SURE ABOUT THIS
     files = sorted(filter(os.path.isfile, os.listdir(path)), key=os.path.getctime)  # ordering the images by date of creation
 
-    for filename in files:
+    imgs = np.zeros((len(files), 3648, 5472))  # list with all the images (jpg or png). TODO: set to size of image
+
+    for i, filename in enumerate(files):
     #for filename in sorted(os.listdir(path)):
         if filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg'):
             img_path = os.path.join(path, filename)
             time_creation.append(os.stat(filename).st_ctime)
             #print(img_path)
-            img = np.array(Image.open(img_path))
-            imgs.append(img) #appending the image to the list
+            imgs[i,:,:] = np.array(Image.open(img_path))
+            #imgs.append(img) #appending the image to the list
             
         else:
             continue
@@ -72,7 +74,7 @@ def select_ROI(ROI_PATH, scale_f = 4, RADIUS = 480):
     return ROIs
 
 
-def temporal_median_filter(imgs, size_kernel):
+def temporal_median_filter(imgs, size_kernel_):
     """ Temporal median filter
     
     Performs temporal median filter without overlapping.
@@ -82,9 +84,10 @@ def temporal_median_filter(imgs, size_kernel):
     size_kernel: number of frames over which computes median filter
     
     """
-    print('\n Computing temporal median filter with kernel size ', size_kernel, '...')
+    print('\n Computing temporal median filter with kernel size ', size_kernel_, '...')
     imgs_med = []
    
+    size_kernel = size_kernel_-1
     for i in np.arange(0, len(imgs)//size_kernel) :  
         try:
             seq = np.stack(imgs[i*(size_kernel+1):(size_kernel*(i+1)+i)], axis = 2)  #TODO: use last images as well
@@ -96,7 +99,7 @@ def temporal_median_filter(imgs, size_kernel):
     return imgs_med
 
 
-def temporal_mean_filter(imgs, size_kernel):
+def temporal_mean_filter(imgs, size_kernel_):
     """ Temporal mean filter
     
     Performs temporal average filter without overlapping
@@ -105,9 +108,10 @@ def temporal_mean_filter(imgs, size_kernel):
     size_kernel: number of frames over which computes median filter
     
     """
-    print('\n Computing temporal average filter with kernel size ', size_kernel, '...')
+    print('\n Computing temporal average filter with kernel size ', size_kernel_, '...')
     imgs_med = []
     
+    size_kernel = size_kernel_-1
     for i in np.arange(0, len(imgs)//size_kernel) :
         print('Computing window from '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
         try: 
@@ -115,8 +119,9 @@ def temporal_mean_filter(imgs, size_kernel):
             batch = np.mean(seq, axis = 2).astype(np.uint8)
             imgs_med.append(batch)
         except:
-            print('Number of images = '+str(len(imgs)))
-            print('Could not compute window with indices '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
+            continue
+            #print('Number of images = '+str(len(imgs)))
+            #print('Could not compute window with indices '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
     
     return imgs_med
 

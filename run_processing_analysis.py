@@ -20,10 +20,10 @@ import os
 #important to import file that are not here
 #sys.path.append(os.path.abspath(path_code))
 
-from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from tkinter import filedialog, Tk
+from PIL import Image
 from processing.processing_functions import temporal_mean_filter, save_imgs, temporal_median_filter, open_images, binarize_imgs, correct_background, select_ROI, invert_imgs, mask_ROIs
 from analysis.Analyse_results_with_connected_components import Measure
 #from analysis.Select_ROI import execute_roi
@@ -76,7 +76,7 @@ print('Averaged images shape: ', np.shape(imgs_avg))
 #imgs_median = temporal_median_filter(imgs, 5)
 
 # 2. Background illumination intensity correction
-imgs_corrected = correct_background(imgs, ORIGINAL_FOLDER)  #TODO: WARNING IMGS_AVG
+imgs_corrected = correct_background(imgs_avg, ORIGINAL_FOLDER)  #TODO: WARNING IMGS_AVG
 print('Corrected images shape: ', np.shape(imgs_corrected))
 
 # 3. Inverting image (our AU-NP spots will be white ~255)
@@ -111,16 +111,13 @@ print('Thresholded images shape: ', np.shape(imgs_thresh))
 
 #%%
 # ANALYZING IMAGES
-capture_refresh_time = framerate  # TODO
-mes = Measure(NAME_IMG_FOLDER, ROIs, capture_refresh_time)
-signal = mes.signal_perImage(img_test) #TODO: FOR LOOP AND DECIDE THRESHOLD, SAVE THIS IN .CSV
-print('final signal', signal)
-
 signal = []
 foreground = []
 background = []
 
+capture_refresh_time = framerate
 for img in imgs_thresh:
+    mes = Measure(NAME_IMG_FOLDER, ROIs, capture_refresh_time)
     result = mes.signal_perImage(img)
     signal = result[0]
     foreground = result[1]
@@ -187,3 +184,7 @@ if open_saved_data == True:
 
 #plt.figure()
 #plt.imshow(img, cmap='gray')
+    
+    
+    
+    #No connected components

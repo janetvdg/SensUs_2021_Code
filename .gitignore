@@ -3,3 +3,5 @@ images/*
 images_processed/*
 !images/.gitkeep
 !images_processed/.gitkeep
+!focus/.gitkeep
+focus/*
