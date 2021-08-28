@@ -63,14 +63,12 @@ class Measure:
                 if((area>9) & (area<90)): #TODO: before it was 3, 30
                     nb_pixels = nb_pixels + area 
                     
-        percent_pixels = nb_pixels /len(img)
+        percent_pixels = nb_pixels / len(img)
         print('Number of pixels detected: ', nb_pixels)
         print('Percentage of pixels detected: ', percent_pixels*100, '%')
         
-        return nb_pixels, percent_pixels, labels
-            
-    # TODO: FIND BACKGROUND
-    # TODO: SAVE ARRAY OF NUMBER OF PIXELS FOR EACH IMAGE
+        return percent_pixels
+
 
     
     def signal_perImage(self, img):
@@ -80,23 +78,17 @@ class Measure:
         for cx, cy, rad in self.circles :
             self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
             xvec, yvec = circle(cx, cy, rad)  #TODO: CHANGE TO DISK, SOME PROBLEMS HERE WITH SIZE
-            S, percent_pixels, labels = self.find_GNP(img[yvec, xvec])
-            spot.append(S)  #Changed
-        
-        
+            percent_pixels = self.find_GNP(img[yvec, xvec])  # S is % of pixels
+            spot.append(percent_pixels)  #Changed
+
         background = np.sum(np.array(spot[-2:])) #changed to sum 
         self.log.info(f'background intensity: {background}')
-        # print(f'background intensity: {background}')
         foreground = np.sum(np.array(spot[:-2])) #changed to sum 
         self.log.info(f'foreground intensity: {foreground}')
-        # print(f'foreground intensity: {foreground}')
-        #background_t = background.mean()
-        #foreground_t = foreground.mean()
-        #Signal = (foreground_t-background_t)/(background+foreground)
         print('background', background)
         print('foreground', foreground)
         print('spot', spot)
-        Signal = foreground/background * 100
+        Signal = foreground - background
         return Signal, foreground, background
     
            
@@ -105,15 +97,10 @@ class Measure:
 # You get the intensity from inside the circles for all the different images
 # What does sorted do
     def total_intensity(self):
-        #ordered_id = sorted([int(file[4:8]) for file in os.listdir(self.path) \
-                           #  if file[0:4] == 'img_' and file[-4:] == '.npy'])
-        #ordered_pathes = [f'results/img_{n:04d}.npy' for n in ordered_id]
-        #intensity = [self.intensity_perImage(np.load(f)) for f in ordered_pathes]
         intensity = []
         for img_arr in os.listdir(self.path) :
-            #img = np.load(f)       
+
             intensity.append(self.signal_perImage(np.load(self.path + img_arr), 70))
-            #del img
         return intensity
     
     
@@ -145,12 +132,3 @@ class Measure:
         # print('concentration ',concentration)
 
         return slope, concentration
-
-
-#%%
-#src = cv2.imread('C:/Sensus 2021/Code/Code_23_08/Binary.png')
-#print(src.shape)
-#S, lable = signal_perImage(src, 80)
-
-#%% 
-#cv2.imshow('image', src)

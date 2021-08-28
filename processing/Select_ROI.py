@@ -10,8 +10,6 @@ import cv2
 import numpy as np
 
 
-
-
 #Still need to change this such that after being deleted the circle actually dissapears
 def click_event(event, x, y, flags, params):
    # checking for left mouse clicks, at the moment left mouse clicks are considered as signal 
@@ -52,16 +50,17 @@ def execute_roi(path_image, image_size, cc):
     
     # reading the image
     img = cv2.resize(cv2.imread(path_image, 0), image_size)
-    
+
+    cv2.startWindowThread()
     # displaying the image
     cv2.imshow('image', img)
-    
+
     #global imgc
     imgc = np.copy(img)
     
     params = [imgc, circles, ROI_radius]
   
-    # setting mouse hadler for the image
+    # setting mouse handler for the image
     # and calling the click_event() function
     cv2.setMouseCallback('image', click_event, params)
   
@@ -69,7 +68,9 @@ def execute_roi(path_image, image_size, cc):
     cv2.waitKey(0)
   
     # close the window
+    #cv2.waitKey(1)
     cv2.destroyAllWindows()
+    #cv2.waitKey(1)
     
     return circles
 

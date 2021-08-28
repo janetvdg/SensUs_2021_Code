@@ -6,3 +6,4 @@ images_processed/*
 !focus/.gitkeep
 focus/*
 test.npy
+venv

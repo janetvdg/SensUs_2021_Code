@@ -20,11 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5acd1d87-7020-4df4-b8c6-43c779efab28" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/preprocess.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/processing/RunAnalysisHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/processing/RunAnalysisHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/processing/Select_ROI.py" beforeDir="false" afterPath="$PROJECT_DIR$/processing/Select_ROI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_parallel.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_parallel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_processing_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_processing_analysis.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,6 +63,9 @@
       <module name="SensUs_2021_Code" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/processing" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -123,6 +126,9 @@
       <module name="SensUs_2021_Code" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -154,7 +160,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1630077373080</updated>
-      <workItem from="1630077403872" duration="30372000" />
+      <workItem from="1630077403872" duration="34526000" />
+      <workItem from="1630171080198" duration="1707000" />
     </task>
     <servers />
   </component>
@@ -171,6 +178,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="184" y="109" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1630080181997">
@@ -181,50 +189,50 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="420" y="256" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1440.900@0.0.1440.900" timestamp="1630080791991" />
-    <state x="323" y="129" key="#com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog" timestamp="1630079416382">
+    <state x="323" y="129" key="#com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog" timestamp="1630168555221">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="323" y="129" key="#com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog/0.0.1440.900@0.0.1440.900" timestamp="1630079416382" />
-    <state width="1398" height="304" key="GridCell.Tab.0.bottom" timestamp="1630165185858">
+    <state x="323" y="129" key="#com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog/0.0.1440.900@0.0.1440.900" timestamp="1630168555221" />
+    <state width="1398" height="304" key="GridCell.Tab.0.bottom" timestamp="1630171046009">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="304" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1630165185858" />
-    <state width="1398" height="304" key="GridCell.Tab.0.center" timestamp="1630165185856">
+    <state width="1398" height="304" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1630171046009" />
+    <state width="1398" height="304" key="GridCell.Tab.0.center" timestamp="1630171046007">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="304" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1630165185856" />
-    <state width="1398" height="304" key="GridCell.Tab.0.left" timestamp="1630165185854">
+    <state width="1398" height="304" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1630171046007" />
+    <state width="1398" height="304" key="GridCell.Tab.0.left" timestamp="1630171046007">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="304" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1630165185854" />
-    <state width="1398" height="304" key="GridCell.Tab.0.right" timestamp="1630165185857">
+    <state width="1398" height="304" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1630171046007" />
+    <state width="1398" height="304" key="GridCell.Tab.0.right" timestamp="1630171046009">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="304" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1630165185857" />
-    <state width="1398" height="304" key="GridCell.Tab.1.bottom" timestamp="1630165185862">
+    <state width="1398" height="304" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1630171046009" />
+    <state width="1398" height="304" key="GridCell.Tab.1.bottom" timestamp="1630171046011">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="304" key="GridCell.Tab.1.bottom/0.0.1440.900@0.0.1440.900" timestamp="1630165185862" />
+    <state width="1398" height="304" key="GridCell.Tab.1.bottom/0.0.1440.900@0.0.1440.900" timestamp="1630171046011" />
     <state width="1398" height="304" key="GridCell.Tab.1.bottom/0.25.1440.806@0.25.1440.806" timestamp="1630083875586" />
-    <state width="1398" height="304" key="GridCell.Tab.1.center" timestamp="1630165185860">
+    <state width="1398" height="304" key="GridCell.Tab.1.center" timestamp="1630171046010">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="304" key="GridCell.Tab.1.center/0.0.1440.900@0.0.1440.900" timestamp="1630165185860" />
+    <state width="1398" height="304" key="GridCell.Tab.1.center/0.0.1440.900@0.0.1440.900" timestamp="1630171046010" />
     <state width="1398" height="304" key="GridCell.Tab.1.center/0.25.1440.806@0.25.1440.806" timestamp="1630083875584" />
-    <state width="1398" height="304" key="GridCell.Tab.1.left" timestamp="1630165185859">
+    <state width="1398" height="304" key="GridCell.Tab.1.left" timestamp="1630171046010">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="304" key="GridCell.Tab.1.left/0.0.1440.900@0.0.1440.900" timestamp="1630165185859" />
+    <state width="1398" height="304" key="GridCell.Tab.1.left/0.0.1440.900@0.0.1440.900" timestamp="1630171046010" />
     <state width="1398" height="304" key="GridCell.Tab.1.left/0.25.1440.806@0.25.1440.806" timestamp="1630083875583" />
-    <state width="1398" height="304" key="GridCell.Tab.1.right" timestamp="1630165185861">
+    <state width="1398" height="304" key="GridCell.Tab.1.right" timestamp="1630171046011">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="304" key="GridCell.Tab.1.right/0.0.1440.900@0.0.1440.900" timestamp="1630165185861" />
+    <state width="1398" height="304" key="GridCell.Tab.1.right/0.0.1440.900@0.0.1440.900" timestamp="1630171046011" />
     <state width="1398" height="304" key="GridCell.Tab.1.right/0.25.1440.806@0.25.1440.806" timestamp="1630083875585" />
-    <state x="259" y="119" key="SettingsEditor" timestamp="1630090230274">
+    <state x="259" y="119" key="SettingsEditor" timestamp="1630169570516">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="259" y="119" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1630090230274" />
+    <state x="259" y="119" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1630169570516" />
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1630164389052">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -250,37 +258,37 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/processing/Select_ROI.py</url>
-          <line>53</line>
+          <line>51</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/processing/Select_ROI.py</url>
-          <line>50</line>
+          <line>48</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/processing/Select_ROI.py</url>
-          <line>56</line>
+          <line>55</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py</url>
-          <line>82</line>
+          <line>80</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py</url>
-          <line>81</line>
+          <line>79</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py</url>
-          <line>83</line>
+          <line>81</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/run_parallel.py</url>
-          <line>77</line>
+          <line>78</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
