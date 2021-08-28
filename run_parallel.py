@@ -3,34 +3,28 @@
 """
 Run parallel
 
+This file detects the creation of a new file in a folder, which is then uploaded.
+It will run in parallel with the creation of these files, stacking them in the size of a window, running the preprocessing
+of the images and analysing them in order to get a result in the form of percentage of pixels detected, that correspond
+to an estimation of the number of AU-NP detected by the SenSwiss sensor 2021, based on SPR in AU-NHA.
+
 Created on Fri Aug 27 11:11:05 2021
 
 @author: janet
 """
              
-import time 
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-import numpy as np
-import os
-from preprocess import preprocess, load_image, analysis, select_ROI_image
-from processing.processing_functions import select_ROI
-from analysis.Analyse_results_with_connected_components import Measure
-import matplotlib.pyplot as plt
+import time
 import matplotlib
-matplotlib.use('TkAgg') #???TODO
+import os
 import pandas as pd
-
+from watchdog.observers import Observer
+from processing.preprocess import select_ROI_image
+from processing.processing_functions import select_ROI
+import matplotlib.pyplot as plt
+matplotlib.use('TkAgg') #???TODO
 from processing.RunAnalysisHandler import RunAnalysisHandler
-from processing.RunROIHandler import RunROIHandler
 
-
-
-
-
-
-
-ROIs = [[3444, 2316,  480], [1096, 2484,  480], [2348, 1456,  480], [4352,  820,  480]]
+#ROIs = [[3444, 2316,  480], [1096, 2484,  480], [2348, 1456,  480], [4352,  820,  480]]
 
 
 ## 1. DESCRIBING FOLDERS
@@ -46,28 +40,24 @@ os.chdir(ORIGINAL_FOLDER)
 
 DIR = os.path.join(IMG_FOLDER, dirs[-1]) # folder to look at
 
-# 2. SELECTING ROI from last image created in folder /focus
+
+# 2. SELECTING ROI from last image created in folder ./focus
 ROI_path = select_ROI_image(DIR_ROI)  # selecting image to select ROI, getting path
 print('ROI PATH', ROI_path)
 os.chdir(ORIGINAL_FOLDER)  # going back to original working directory
-#ROIs = select_ROI(ROI_path)
-print('hei')
+ROIs = select_ROI(ROI_path)
 time.sleep(1)
-print('bye')
 
 
 # 3. STARTING THE OBSERVER: it will find any new images
 def run_analysis(ROI):
     # Observer for running the analysis
-    observer2 = Observer()
+    observer = Observer()
     event_analysis_handler = RunAnalysisHandler(ROIs, window_size=5, IMG_FOLDER=IMG_FOLDER)  # create event handler
-    observer2.schedule(event_analysis_handler, path=DIR)  # set observer to use created handler in directory
-    observer2.start()  # creates a new thread
+    observer.schedule(event_analysis_handler, path=DIR)  # set observer to use created handler in directory
+    observer.start()  # creates a new thread
     print('TO_LOOK_FOLDER', DIR)
 
-    #print('I want this', event_analysis_handler.result())
-
-    #TODO: HOW TO GET THE RESULT FROM THERE INSIDE
 
     # sleep until keyboard interrupt, then stop + rejoin the observer
     results_list = []
@@ -84,15 +74,14 @@ def run_analysis(ROI):
             plt.show()
             plt.clf()
 
-    except KeyboardInterrupt:  # ctrl-c
-        observer2.stop()  # when program stops, it does some work before terminating the thread
+    except KeyboardInterrupt:  # When pressing ctrl-c (at the end of the acquisition)
+        observer.stop()  # when program stops, it does some work before terminating the thread
         print('last results list', results_list)
+        # saving results as csv
         results_df = pd.DataFrame(results_list, columns=('Signal', 'Foreground', 'Background'))
         results_df.to_csv(str(DIR)+'/result.csv', index=True)
 
-        # TODO: SAVE
-
-    observer2.join() # is needed to proper end a thread for "it blocks the thread in which you're making the call, until (self.observer) is finished
+    observer.join() # is needed to proper end a thread for "it blocks the thread in which you're making the call, until (self.observer) is finished
 
 
     print('asdf', event_analysis_handler.get_result())
@@ -101,6 +90,3 @@ def run_analysis(ROI):
 
 run_analysis(ROIs)
 
-
-#TODO: ROI
-# moving average of the signal result

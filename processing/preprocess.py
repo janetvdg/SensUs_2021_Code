@@ -15,34 +15,23 @@ from PIL import Image
 from processing.processing_functions import temporal_mean_filter, save_imgs, temporal_median_filter, open_images, binarize_imgs, correct_background, select_ROI, invert_imgs, mask_ROIs
 from analysis.Analyse_results_with_connected_components import Measure
 from skimage import io
-
-# you input the images
-# you input the threshold
+import time
 
 
 def load_image(filename):
-    imgs = [] # list with all the images (jpg or png)
-    time_creation = [] # list with the time of creation of each image
-    #parent = os.getcwd()
-    #path = os.path.join(parent, PATH)
+    """
+    Function to load an image of format jpg, png, tiff
+    :param filename : name of the image to open
+    :return img : image as array
+    """
     print('\n Opening image '+str(filename)+' ...')
-    
-    #os.chdir(path)  #TODO: NOT SURE ABOUT THIS
-    #files = sorted(filter(os.path.isfile, os.listdir(path)), key=os.path.getctime)  # ordering the images by date of creation
 
-    
     if filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg'):
-        #img_path = os.path.join(path, filename)
-        time_creation.append(os.stat(filename).st_ctime)
-        #print(img_path)
+        time.sleep(0.3)
         img = np.array(Image.open(filename))
-        #imgs.append(img) #appending the image to the list
     elif filename.endswith('tiff') or filename.endswith('tif'):
-        # img_path = os.path.join(path, filename)
-        time_creation.append(os.stat(filename).st_ctime)
-        # print(img_path)
+        time.sleep(0.3)
         img = np.array(io.imread(filename))
-        
     return img
 
 
@@ -62,7 +51,16 @@ def select_ROI_image(path):
 
 
 def preprocess(imgs, window_size, threshold, ORIGINAL_FOLDER): 
-    
+    """
+    Runs the preprocessing
+    :param imgs:
+    :param window_size:
+    :param threshold:
+    :param ORIGINAL_FOLDER:
+    :return:
+        imgs_avg
+        imgs_thresh
+    """
     # 1. Temporal average filter: to remove moving objects
     imgs_avg = temporal_mean_filter(imgs, window_size)
     print('Averaged images shape: ', np.shape(imgs_avg))
@@ -85,6 +83,15 @@ def preprocess(imgs, window_size, threshold, ORIGINAL_FOLDER):
 
 
 def analysis(img, NAME_IMG_FOLDER, ROIs, framerate):
+    """
+    Analysis function to run the analysis.
+    Signal as percentage of pixels, computed as Signal = Foreground - Background
+    :param img:
+    :param NAME_IMG_FOLDER:
+    :param ROIs:
+    :param framerate:
+    :return:
+    """
     mes = Measure(NAME_IMG_FOLDER, ROIs, framerate)
     result = mes.signal_perImage(img)
     signal = result[0]
@@ -93,16 +100,6 @@ def analysis(img, NAME_IMG_FOLDER, ROIs, framerate):
     print('final signal', signal)
     
     return result
-
-    
-                                                                  
-    #imgs_avg = temporal_mean_filter(imgs, threshold)
-#    print('Averaged images shape: ', np.shape(imgs_avg))
-#
-#    #imgs_corrected = correct_background(imgs, ORIGINAL_FOLDER)  #TODO: WARNING IMGS_AVG
-#    print('Corrected images shape: ', np.shape(imgs_corrected))                                                        
-
-
 
 
     

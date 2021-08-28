@@ -20,10 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5acd1d87-7020-4df4-b8c6-43c779efab28" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/processing/Select_ROI.py" beforeDir="false" afterPath="$PROJECT_DIR$/processing/Select_ROI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/imagesresult.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/processing/preprocess.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/processing/RunAnalysisHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/processing/RunAnalysisHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/processing/RunROIHandler.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/run_parallel.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_parallel.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -161,7 +162,7 @@
       <option name="presentableId" value="Default" />
       <updated>1630077373080</updated>
       <workItem from="1630077403872" duration="34526000" />
-      <workItem from="1630171080198" duration="1707000" />
+      <workItem from="1630171080198" duration="3581000" />
     </task>
     <servers />
   </component>
@@ -193,6 +194,10 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="323" y="129" key="#com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog/0.0.1440.900@0.0.1440.900" timestamp="1630168555221" />
+    <state x="458" y="202" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1630174167792">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="458" y="202" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1440.900@0.0.1440.900" timestamp="1630174167792" />
     <state width="1398" height="304" key="GridCell.Tab.0.bottom" timestamp="1630171046009">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -288,17 +293,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/run_parallel.py</url>
-          <line>78</line>
+          <line>68</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/processing/RunROIHandler.py</url>
-          <line>18</line>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/preprocess.py</url>
-          <line>60</line>
+          <url>file://$PROJECT_DIR$/processing/preprocess.py</url>
+          <line>52</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>

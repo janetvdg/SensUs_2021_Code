@@ -4,7 +4,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import numpy as np
 import os
-from preprocess import preprocess, load_image, analysis
+from processing.preprocess import preprocess, load_image, analysis
 from processing.processing_functions import select_ROI
 from analysis.Analyse_results_with_connected_components import Measure
 import matplotlib.pyplot as plt
@@ -49,7 +49,7 @@ class RunAnalysisHandler(FileSystemEventHandler):
             print('imgs', np.shape(self.imgs))
             self.log = False
 
-        # If the number of events is equal to the window size, it will preprocess the list of images
+        # If the number of events is equal to the window size, it will preprocess the list of images and analyse and output the result
         else:
             self.process_analyse()
             self.results_list.append(list(self.result))
