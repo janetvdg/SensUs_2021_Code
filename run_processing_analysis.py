@@ -152,7 +152,7 @@ if saving == True :
 #with open('test.npy', 'wb') as f:
 #    np.save(f, par)
 
-open_saved_data = False
+open_saved_data = True
 if open_saved_data == True:
     with open('./test.npy', 'rb') as f:
         par = np.load(f, allow_pickle=True)
@@ -188,3 +188,8 @@ if open_saved_data == True:
     
     
     #No connected components
+#%%
+import matplotlib.pyplot as plt
+segm = [[12, 13], [13, 15], [13, 15]]
+seg = [x[0] for x in segm[1:]]
+plt.plot(seg)

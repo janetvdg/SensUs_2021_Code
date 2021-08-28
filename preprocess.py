@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from processing.processing_functions import temporal_mean_filter, save_imgs, temporal_median_filter, open_images, binarize_imgs, correct_background, select_ROI, invert_imgs, mask_ROIs
 from analysis.Analyse_results_with_connected_components import Measure
-
+from skimage import io
 
 # you input the images
 # you input the threshold
@@ -37,10 +37,29 @@ def load_image(filename):
         #print(img_path)
         img = np.array(Image.open(filename))
         #imgs.append(img) #appending the image to the list
+    elif filename.endswith('tiff') or filename.endswith('tif'):
+        # img_path = os.path.join(path, filename)
+        time_creation.append(os.stat(filename).st_ctime)
+        # print(img_path)
+        img = np.array(io.imread(filename))
         
     return img
-    
-    
+
+
+def select_ROI_image(path):
+    """
+    Function to select the image to which select ROI
+    :param path: path of the directory
+    :return:
+        path_ROI: path of the image
+    """
+    os.chdir(path)  #TODO: NOT SURE ABOUT THIS
+    files = sorted(filter(os.path.isfile, os.listdir(path)), key=os.path.getctime)  # ordering the images by date of creation
+    path_ROI = os.path.join(path, files[-1])  # getting the last one
+    #print('\n Opening image to select ROI ' + str(filename) + ' ...')
+
+    return path_ROI
+
 
 def preprocess(imgs, window_size, threshold, ORIGINAL_FOLDER): 
     

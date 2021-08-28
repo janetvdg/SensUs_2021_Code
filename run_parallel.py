@@ -13,9 +13,12 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import numpy as np
 import os
-from preprocess import preprocess, load_image, analysis
+from preprocess import preprocess, load_image, analysis, select_ROI_image
 from processing.processing_functions import select_ROI
 from analysis.Analyse_results_with_connected_components import Measure
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg') #???TODO
 
 from processing.RunAnalysisHandler import RunAnalysisHandler
 from processing.RunROIHandler import RunROIHandler
@@ -26,10 +29,7 @@ from processing.RunROIHandler import RunROIHandler
 
 
 
-ROIs = [[3444, 2316,  480],
- [1096, 2484,  480],
- [2348, 1456,  480],
- [4352,  820,  480]]
+#ROIs = [[3444, 2316,  480], [1096, 2484,  480], [2348, 1456,  480], [4352,  820,  480]]
 
 
 ## 1. DESCRIBING FOLDERS
@@ -45,29 +45,15 @@ os.chdir(ORIGINAL_FOLDER)
 
 DIR = os.path.join(IMG_FOLDER, dirs[-1]) # folder to look at
 
-# moving average of the signal result
+# 2. SELECTING ROI from last image created in folder /focus
+ROI_path = select_ROI_image(DIR_ROI)  # selecting image to select ROI, getting path
+print('ROI PATH', ROI_path)
+os.chdir(ORIGINAL_FOLDER)  # going back to original working directory
+ROIs = select_ROI(ROI_path)
+time.sleep(0.1)
 
 
-
-# 2. STARTING THE OBSERVER: it will find any new images
-# Observer for selecting ROI
-#observer1 = Observer()
-#event_ROI_handler = RunROIHandler() # create event handler
-#observer1.schedule(event_ROI_handler, path=DIR_ROI) # set observer to use created handler in directory
-#observer1.start()
-#print('path DIR ROI', DIR_ROI)
-
-# sleep until keyboard interrupt, then stop + rejoin the observer
-#try:
-#    while True:
-#        time.sleep(1)
-#except KeyboardInterrupt:  #ctrl-C
-#    print('observer1 interrupted')
-#    observer1.stop()
-
-#observer1.join()  # it makes the caller wait until the thread terminates
-
-
+# 3. STARTING THE OBSERVER: it will find any new images
 # Observer for running the analysis
 observer2 = Observer()
 event_analysis_handler = RunAnalysisHandler(ROIs, window_size = 5, IMG_FOLDER = IMG_FOLDER) # create event handler
@@ -75,19 +61,41 @@ observer2.schedule(event_analysis_handler, path=DIR) # set observer to use creat
 observer2.start()  # creates a new thread
 print('TO_LOOK_FOLDER', DIR)
 
+
+
+
+#print('I want this', event_analysis_handler.result())
+
 #TODO: HOW TO GET THE RESULT FROM THERE INSIDE
 
 # sleep until keyboard interrupt, then stop + rejoin the observer
+results_list = []
+
+fig = plt.figure()
 try:
     while True:
-        time.sleep(1)  # keeps main thread running
+        time.sleep(0.1)  # keeps main thread running
+        results_list = event_analysis_handler.get_result()
+        print(results_list)
+        foreground = [x[1] for x in results_list[1:]]
+        print('Foreground', foreground)
+        plt.plot(foreground)
+        plt.pause(1)
+        plt.show()
+        plt.clf()
+
+        # TODO: SAVE
+
 except KeyboardInterrupt:  # ctrl-c
     observer2.stop()  # when program stops, it does some work before terminating the thread
+    print('last results list', results_list)
     print('observer2 interrupted')
-    print('result', result)
+    print('I want this', event_analysis_handler.result)
 observer2.join() # is needed to proper end a thread for "it blocks the thread in which you're making the call, until (self.observer) is finished
 
 
+print('asdf', event_analysis_handler.get_result())
 
 
 #TODO: ROI
+# moving average of the signal result
