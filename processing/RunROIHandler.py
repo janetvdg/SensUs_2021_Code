@@ -22,4 +22,6 @@ class RunROIHandler(FileSystemEventHandler):
         print('ROI image path', focus_img_path)
         #self.focus_img = load_image(filename)
         ## SELECT ROI
-        self.ROIs = select_ROI(focus_img_path)
+        #self.ROIs = select_ROI(focus_img_path)
+        self.ROIs = [np.array([900, 900, 480]), np.array([200, 900, 480]), np.array([900, 200, 480])]
+        return self.ROIs

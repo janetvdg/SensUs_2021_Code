@@ -5,3 +5,4 @@ images_processed/*
 !images_processed/.gitkeep
 !focus/.gitkeep
 focus/*
+test.npy

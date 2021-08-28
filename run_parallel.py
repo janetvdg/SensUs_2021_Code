@@ -25,7 +25,12 @@ from processing.RunROIHandler import RunROIHandler
 
 
 
-ROIs = [np.array([900, 900, 480]), np.array([200, 900, 480]), np.array([900, 200, 480])]
+
+ROIs = [[3444, 2316,  480],
+ [1096, 2484,  480],
+ [2348, 1456,  480],
+ [4352,  820,  480]]
+
 
 ## 1. DESCRIBING FOLDERS
 ORIGINAL_FOLDER = os.path.dirname(os.path.realpath(__file__))
@@ -39,7 +44,7 @@ dirs = sorted(filter(os.path.isdir, os.listdir(path)), key=os.path.getctime)
 os.chdir(ORIGINAL_FOLDER)
 
 DIR = os.path.join(IMG_FOLDER, dirs[-1]) # folder to look at
-print('TO_LOOK_FOLDER', DIR)
+
 # moving average of the signal result
 
 
@@ -48,9 +53,10 @@ print('TO_LOOK_FOLDER', DIR)
 # Observer for selecting ROI
 #observer1 = Observer()
 #event_ROI_handler = RunROIHandler() # create event handler
-#print('path DIR ROI', DIR_ROI)
 #observer1.schedule(event_ROI_handler, path=DIR_ROI) # set observer to use created handler in directory
 #observer1.start()
+#print('path DIR ROI', DIR_ROI)
+
 # sleep until keyboard interrupt, then stop + rejoin the observer
 #try:
 #    while True:
@@ -67,6 +73,9 @@ observer2 = Observer()
 event_analysis_handler = RunAnalysisHandler(ROIs, window_size = 5, IMG_FOLDER = IMG_FOLDER) # create event handler
 observer2.schedule(event_analysis_handler, path=DIR) # set observer to use created handler in directory
 observer2.start()  # creates a new thread
+print('TO_LOOK_FOLDER', DIR)
+
+#TODO: HOW TO GET THE RESULT FROM THERE INSIDE
 
 # sleep until keyboard interrupt, then stop + rejoin the observer
 try:

@@ -17,9 +17,24 @@ class RunAnalysisHandler(FileSystemEventHandler):
         self.imgs = []
         self.ORIGINAL_FOLDER = os.getcwd()
         self.framerate = framerate
-        self.results = []
+        self.result = []
         self.ROIs = ROIs
         self.IMG_FOLDER = IMG_FOLDER
+
+    def process_analyse(self):
+        img_avg, img_thresh = preprocess(self.imgs, self.window_size, self.threshold, self.ORIGINAL_FOLDER)
+        signal = []
+        foreground = []
+        background = []
+
+        mes = Measure(self.IMG_FOLDER, self.ROIs, self.framerate)
+        self.result = mes.signal_perImage(img_thresh[0]) # I select 0 because it's a list with one single element
+        #self.result.append(res)
+        signal = self.result[0]
+        foreground = self.result[1]
+        background = self.result[2]
+        print('final signal', signal)
+        return self.result
 
     def on_created(self, event):  # when file is created
         # Every time a new file is created in the folder, it counts the event and loads the image
@@ -34,21 +49,7 @@ class RunAnalysisHandler(FileSystemEventHandler):
 
         # If the number of events is equal to the window size, it will preprocess the list of images
         else:
-            img_avg, img_thresh = preprocess(self.imgs, self.window_size, self.threshold, self.ORIGINAL_FOLDER)
-            signal = []
-            foreground = []
-            background = []
-
-            mes = Measure(self.IMG_FOLDER, self.ROIs, self.framerate)
-            self.result.append(mes.signal_perImage(img_thresh))
-            signal = self.result[0]
-            foreground = self.result[1]
-            background = self.result[2]
-            print('final signal', signal)
-
-
+            self.process_analyse()
             # Reinitializing the count and the list of images
-            print(self.num_events)
             self.num_events = 0
-            print(self.num_events)
             self.imgs = []  # restarting the list
