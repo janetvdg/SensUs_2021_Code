@@ -29,10 +29,13 @@ def load_image(filename):
     if filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg'):
         time.sleep(0.3)
         img = np.array(Image.open(filename))
+        return img
     elif filename.endswith('tiff') or filename.endswith('tif'):
         time.sleep(0.3)
         img = np.array(io.imread(filename))
-    return img
+        return img
+    else:
+        pass
 
 
 def select_ROI_image(path):
@@ -43,7 +46,9 @@ def select_ROI_image(path):
         path_ROI: path of the image
     """
     os.chdir(path)  #TODO: NOT SURE ABOUT THIS
+    print(os.getcwd())
     files = sorted(filter(os.path.isfile, os.listdir(path)), key=os.path.getctime)  # ordering the images by date of creation
+    print(files)
     path_ROI = os.path.join(path, files[-1])  # getting the last one
     #print('\n Opening image to select ROI ' + str(filename) + ' ...')
 

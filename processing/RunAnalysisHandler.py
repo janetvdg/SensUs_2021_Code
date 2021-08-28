@@ -8,6 +8,15 @@ from processing.preprocess import preprocess, load_image, analysis
 from processing.processing_functions import select_ROI
 from analysis.Analyse_results_with_connected_components import Measure
 import matplotlib.pyplot as plt
+import sys 
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image
+from processing.processing_functions import temporal_mean_filter, save_imgs, temporal_median_filter, open_images, binarize_imgs, correct_background, select_ROI, invert_imgs, mask_ROIs
+from analysis.Analyse_results_with_connected_components import Measure
+from skimage import io
+import time
 
 class RunAnalysisHandler(FileSystemEventHandler):
     def __init__(self, ROIs, IMG_FOLDER, window_size=5, threshold=130, framerate = 2):
@@ -39,10 +48,24 @@ class RunAnalysisHandler(FileSystemEventHandler):
 
     def on_created(self, event):  # when file is created
         # Every time a new file is created in the folder, it counts the event and loads the image
-        self.num_events += 1
+        
+    
         filename = event.src_path
-        self.imgs.append(load_image(filename))
+        print('filename', filename)
+        
+              
+        if filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg'):
+            self.num_events += 1
+            time.sleep(0.3)
+            img = np.array(Image.open(filename))
+            self.imgs.append(img)
+        elif filename.endswith('tiff') or filename.endswith('tif'):
+            self.num_events += 1
+            time.sleep(0.3)
+            img = np.array(io.imread(filename))
+            self.imgs.append(img)
 
+        print('num events', self.num_events)
         # If the number of events is lower than the threshold, it will only load the image
         if self.num_events < self.window_size:
             # print("Got event for file %s" % event.src_path)
@@ -60,4 +83,6 @@ class RunAnalysisHandler(FileSystemEventHandler):
 
 
     def get_result(self):
+        print(self.result, 'result')
+        print(self.results_list, 'result list self')
         return self.results_list
