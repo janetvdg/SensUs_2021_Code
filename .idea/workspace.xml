@@ -20,18 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5acd1d87-7020-4df4-b8c6-43c779efab28" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Brightfield.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Darkfield.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analyse4calibrationcurves.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/analysis/Analyse_results.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analysis/RUN.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/analysis/TESTS.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/processing/RunAnalysisHandler.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/processing/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/processing/preprocess.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/processing/processing_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/processing/processing_functions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_parallel.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_parallel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_processing_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_processing_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_parallel.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/run_parallel.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -168,7 +161,7 @@
       <option name="presentableId" value="Default" />
       <updated>1630077373080</updated>
       <workItem from="1630077403872" duration="34526000" />
-      <workItem from="1630171080198" duration="15341000" />
+      <workItem from="1630171080198" duration="15790000" />
     </task>
     <servers />
   </component>
@@ -262,17 +255,17 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/processing/processing_functions.py</url>
-          <line>37</line>
+          <line>38</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/processing/processing_functions.py</url>
-          <line>39</line>
+          <line>40</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/processing/processing_functions.py</url>
-          <line>44</line>
+          <line>45</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

@@ -11,6 +11,7 @@ import numpy as np
 import cv2
 from processing.Select_ROI import execute_roi
 from skimage.draw import circle
+from skimage import io
 
 #    
 
@@ -47,6 +48,9 @@ def open_images(path):
             #print(img_path)
             imgs[i,:,:] = np.array(Image.open(img_path))
             #imgs.append(img) #appending the image to the list
+
+        elif filename.endswith('tiff') or filename.endswith('tif'):
+            imgs[i,:,:] = np.array(io.imread(filename))
             
         else:
             continue
@@ -142,9 +146,12 @@ def correct_background(imgs, path):
     #TODO: THIS WAY IS NOT THE BEST TO GET THE WORKING DIRECTORY, SOMETIMES IT DOES NOT WORK
     #path = os.path.dirname(os.path.realpath('processing_functions.py'))  # Working directory needs to be in main folder SensUs_Code_2021
     os.chdir(path)
-    darkfield = np.array(Image.open(os.path.join("Darkfield.png")))
-    brightfield = np.array(Image.open(os.path.join("Brightfield.png")))
-    
+    #darkfield = np.array(Image.open(os.path.join("Darkfield.png")))
+    #brightfield = np.array(Image.open(os.path.join("Brightfield.png")))
+    darkfield = np.array(io.imread(os.path.join("Darkfield.tiff")))
+    brightfield = np.array(io.imread(os.path.join("Brightfield.tiff")))
+
+
     print('Correcting background illumination intensity...')
     for img in imgs:
         specimen = img
