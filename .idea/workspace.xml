@@ -20,10 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5acd1d87-7020-4df4-b8c6-43c779efab28" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/run_parallel-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/run_parallel-checkpoint.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_parallel.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/run_parallel.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_parallel_notes.ipynb" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,7 +159,7 @@
       <option name="presentableId" value="Default" />
       <updated>1630077373080</updated>
       <workItem from="1630077403872" duration="34526000" />
-      <workItem from="1630171080198" duration="22164000" />
+      <workItem from="1630171080198" duration="23609000" />
     </task>
     <servers />
   </component>

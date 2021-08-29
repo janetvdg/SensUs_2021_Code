@@ -114,26 +114,29 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
             #plt.pause(10)  #aquest
             #plt.show()
             #plt.clf()
-            if keyboard.is_pressed('s'):  # if key 's' is pressed
+            if keyboard.is_pressed('ctrl+j'):  # if key 'ctrl+j' is pressed
                 print('You Pressed a Key!')
                 observer.stop()  # when program stops, it does some work before terminating the thread
-                print('Last results list (you pressed "s")', results_list)
+                print('Last results list (you pressed "ctrl+j")', results_list)
+                results_df = pd.DataFrame(results_list, columns=('Signal', 'Foreground', 'Background'))
+                results_df.to_csv(str(DIR) + '/result.csv', index=True)
                 concentration = event_analysis_handler.get_concentration()
                 print('concentration', concentration)
                 # saving results as csv
                 print('Saving results as result.csv')
-                results_df = pd.DataFrame(results_list, columns=('Signal', 'Foreground', 'Background'))
                 results_df['Concentration'] = pd.Series([concentration for x in range(len(results_df.index))])
                 results_df.to_csv(str(DIR)+'/result.csv', index=True)
-                quit()
+                #quit()
+                sys.exit()
                 
     except (KeyboardInterrupt, SystemExit):  # When pressing ctrl-c (at the end of the acquisition)
         observer.stop()  # when program stops, it does some work before terminating the thread
         print('Last results list', results_list)
+        results_df = pd.DataFrame(results_list, columns=('Signal', 'Foreground', 'Background'))
+        results_df.to_csv(str(DIR) + '/result.csv', index=True)
         concentration = event_analysis_handler.get_concentration()
         print('concentration', concentration)
         # saving results as csv
-        results_df = pd.DataFrame(results_list, columns=('Signal', 'Foreground', 'Background'))
         results_df['Concentration'] = pd.Series([concentration for x in range(len(results_df.index))])
         results_df.to_csv(str(DIR)+'/result.csv', index=True)
         #quit()
@@ -164,5 +167,4 @@ if __name__ == "__main__":
     main()
 
 
-# TODO: FIX SAVING
 

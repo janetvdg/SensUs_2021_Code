@@ -82,7 +82,7 @@ class RunAnalysisHandler(FileSystemEventHandler):
             # Reinitializing the count and the list of images
             self.num_events = 0
             self.imgs = []  # restarting the list
-            print(self.results_list)
+            print('Length of results list', len(self.results_list))
 
     def get_result(self):
         # print(self.result, 'result')
