@@ -113,7 +113,7 @@ def temporal_mean_filter(imgs, size_kernel_):
     
     size_kernel = size_kernel_-1
     for i in np.arange(0, len(imgs)//size_kernel) :
-        print('Computing window from '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
+        #print('Computing window from '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
         try: 
             seq = np.stack(imgs[i*(size_kernel+1):(size_kernel*(i+1)+i)], axis = 2)  #TODO: use last images as well
             batch = np.mean(seq, axis = 2).astype(np.uint8)

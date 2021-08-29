@@ -66,8 +66,8 @@ def preprocess(imgs, window_size, threshold, ORIGINAL_FOLDER):
         imgs_avg
         imgs_thresh
     """
-    # 1. Temporal average filter: to remove moving objects
-    imgs_avg = temporal_mean_filter(imgs, window_size)
+    # 1. Temporal median filter: to remove moving objects
+    imgs_avg = temporal_median_filter(imgs, window_size)
     print('Averaged images shape: ', np.shape(imgs_avg))
     #imgs_median = temporal_median_filter(imgs, 5)
     

@@ -158,38 +158,3 @@ if open_saved_data == True:
         par = np.load(f, allow_pickle=True)
     [imgs, imgs_avg, NAME_IMG_FOLDER, ROIs, ROI_PATH, IMG_PATH] = list(par)
 
-#%% Test
-
-######## Testing threshold
-
-#plt.figure()
-#plt.imshow(imgs_inv[0], cmap='gray')
-#thresholds = [175, 180, 185, 190, 195, 200, 205, 210, 215, 220, 225, 230]
-#import cv2
-#fig, axes = plt.subplots(3,4)
-#for i, ax in enumerate(axes.flat):
-#    tr = thresholds[i]
-#    ret_test, img_thresh_test = cv2.threshold(imgs_inv[-1], tr, 255, cv2.THRESH_BINARY)
-#    c = ax.imshow(img_thresh_test, cmap='gray')
-#    fig.colorbar(c, ax = ax)
-#    ax.set_title('Threshold '+str(tr))
-#
-#plt.show()
-    
-#
-#img = img_thresh_test.copy()
-#
-#circles = ROIs[0]
-#spot = []
-
-#plt.figure()
-#plt.imshow(img, cmap='gray')
-    
-    
-    
-    #No connected components
-#%%
-import matplotlib.pyplot as plt
-segm = [[12, 13], [13, 15], [13, 15]]
-seg = [x[0] for x in segm[1:]]
-plt.plot(seg)

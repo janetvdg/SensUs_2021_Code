@@ -25,41 +25,67 @@ import matplotlib.pyplot as plt
 import numpy as np
 from processing.RunAnalysisHandler import RunAnalysisHandler
 import keyboard
+import sys
 
 #ROIs = [[3444, 2316,  480], [1096, 2484,  480], [2348, 1456,  480], [4352,  820,  480]]
 
 
-## 1. DESCRIBING FOLDERS
-framerate = 2
-ORIGINAL_FOLDER = os.path.dirname(os.path.realpath(__file__))
-print('THIS IS ORIGINAL FOLDER PATH', str(ORIGINAL_FOLDER))
-IMG_FOLDER = os.path.abspath('images') #Folder where the images taken by the camera to be processed will be located
-IMG_PROCESSED_FOLDER = os.path.abspath('images_processed')  #Folder where the resulting images will be located
-DIR_ROI = os.path.abspath('focus')
-path = IMG_FOLDER
-os.chdir(path)
-dirs = sorted(filter(os.path.isdir, os.listdir(path)), key=os.path.getctime)
-os.chdir(ORIGINAL_FOLDER)
-print(os.getcwd())
-DIR = os.path.join(IMG_FOLDER, dirs[-1]) # folder to look at
-print(os.getcwd())
 
-# 2. SELECTING ROI from last image created in folder ./focus
-ROI_path = select_ROI_image(DIR_ROI)  # selecting image to select ROI, getting path
-print('ROI PATH', ROI_path)
-os.chdir(ORIGINAL_FOLDER)  # going back to original working directory
-ROIs = select_ROI(ROI_path)
-time.sleep(1)
+def describe_folders():
+    ORIGINAL_FOLDER = os.path.dirname(os.path.realpath(__file__))
+    print('THIS IS ORIGINAL FOLDER PATH', str(ORIGINAL_FOLDER))
+    IMG_FOLDER = os.path.abspath('images') #Folder where the images taken by the camera to be processed will be located
+    IMG_PROCESSED_FOLDER = os.path.abspath('images_processed')  #Folder where the resulting images will be located
+    DIR_ROI = os.path.abspath('focus')
+    path = IMG_FOLDER
+    os.chdir(path)
+    dirs = sorted(filter(os.path.isdir, os.listdir(path)), key=os.path.getctime)
+    os.chdir(ORIGINAL_FOLDER)
+    DIR = os.path.join(IMG_FOLDER, dirs[-1]) # folder to look at. (I select the last one created)
+    return ORIGINAL_FOLDER, IMG_PROCESSED_FOLDER, IMG_FOLDER, DIR_ROI, DIR
 
 
-# 3. STARTING THE OBSERVER: it will find any new images
-def run_analysis(ROI):
+def press_ROIs(DIR_ROI, ORIGINAL_FOLDER, RADIUS = 480):
+    """
+    Function to select the ROIs (regions of interest), for which the analysis will be computed.
+    It opens the image in DIR_ROI, you press the center where you want to locate the ROIs and returns the position and radius after closing the image.
+    The last two ROIs selected will be used as background.
+    :param DIR_ROI: folder where the images in which the spots are clearly seen are located (./focus)
+    :param ORIGINAL_FOLDER: folder where this script is located
+    :param RADIUS: radius of the ROI
+    :return:
+        ROIs :  array with x, y, radius of size (num_ROIs, 3)
+    """
+    ROI_path = select_ROI_image(DIR_ROI)  # selecting image to select ROI, getting path
+    print('ROI PATH', ROI_path)
+    os.chdir(ORIGINAL_FOLDER)  # going back to original working directory
+    ROIs = select_ROI(ROI_path, RADIUS = RADIUS)
+    time.sleep(1)
+    return ROIs
+
+
+def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshold = 130):
+    """
+    This function sets the observer to a folder (DIR) and each time a new event is detected (ex. a new image in the folder),
+    it will count it, load the image, stack it and run the preprocessing and analysis.
+    This way, it can be run in parallel during the acquisition.
+    When pressed 's', the results are saved in results.csv at DIR and the program is stopped.
+    :param ROIs:  array with x, y, radius of size (num_ROIs, 3)
+    :param window_size: number of frames over which computes averate filter
+    :param IMG_FOLDER: folder where the images taken by the camera to be processed will be located (./images)
+    :param framerate: time between images (s)
+    :param DIR: folder that will be observed. Inside /images, the last one created
+    :param threshold: threshold to which binarize
+    :return:
+    """
+
     # Observer for running the analysis
     observer = Observer()
-    event_analysis_handler = RunAnalysisHandler(ROIs, window_size=5, IMG_FOLDER=IMG_FOLDER, framerate=framerate)  # create event handler
+    event_analysis_handler = RunAnalysisHandler(ROIs, window_size=window_size, IMG_FOLDER=IMG_FOLDER, framerate=framerate, threshold=threshold)  # create event handler
     observer.schedule(event_analysis_handler, path=DIR)  # set observer to use created handler in directory
     observer.start()  # creates a new thread
-    print('TO_LOOK_FOLDER', DIR)
+    print('OBSERVED FOLDER', DIR)
+    print('Press "s" or ctrl+c to exit and save the results')
 
 
     # sleep until keyboard interrupt, then stop + rejoin the observer
@@ -70,31 +96,39 @@ def run_analysis(ROI):
         while True:
             time.sleep(0.1)  # keeps main thread running
             results_list = event_analysis_handler.get_result()
-            print(results_list, 'results_list')
+            #print(results_list, 'results_list')
             foreground = [x[1] for x in results_list[1:]]
             background = [x[2] for x in results_list[1:]]
-            timest= np.arange(0, framerate*len(foreground), framerate)
-            print('Foreground,len', foreground, len(foreground))
+            timest = np.arange(0, framerate*len(foreground), framerate)
+            #print('Foreground,len', foreground, len(foreground))
             #plt.plot(timest, background)
             #plt.pause(1)
             #plt.show()
             #plt.clf()
-            if keyboard.is_pressed('s'):  # if key 'q' is pressed  # if key 's' is pressed 
-                print('You Pressed A Key!')
+            if keyboard.is_pressed('s'):  # if key 's' is pressed
+                print('You Pressed a Key!')
                 observer.stop()  # when program stops, it does some work before terminating the thread
-                print('last results list', results_list)
+                print('Last results list (you pressed "s")', results_list)
+                concentration = event_analysis_handler.get_concentration()
+                print('concentration', concentration)
                 # saving results as csv
+                print('Saving results as result.csv')
                 results_df = pd.DataFrame(results_list, columns=('Signal', 'Foreground', 'Background'))
+                results_df['Concentration'] = pd.Series([concentration for x in range(len(results_df.index))])
                 results_df.to_csv(str(DIR)+'/result.csv', index=True)
                 quit()
                 
     except (KeyboardInterrupt, SystemExit):  # When pressing ctrl-c (at the end of the acquisition)
         observer.stop()  # when program stops, it does some work before terminating the thread
-        print('last results list', results_list)
+        print('Last results list', results_list)
+        concentration = event_analysis_handler.get_concentration()
+        print('concentration', concentration)
         # saving results as csv
         results_df = pd.DataFrame(results_list, columns=('Signal', 'Foreground', 'Background'))
+        results_df['Concentration'] = pd.Series([concentration for x in range(len(results_df.index))])
         results_df.to_csv(str(DIR)+'/result.csv', index=True)
-        quit()
+        #quit()
+        sys.exit()
     observer.join() # is needed to proper end a thread for "it blocks the thread in which you're making the call, until (self.observer) is finished
 
 
@@ -102,6 +136,24 @@ def run_analysis(ROI):
     quit()
 
 
+def main():
+    print('ep')
+    ## 1. DESCRIBING FOLDERS
+    ORIGINAL_FOLDER, IMG_PROCESSED_FOLDER, IMG_FOLDER, DIR_ROI, DIR = describe_folders()
 
-run_analysis(ROIs)
+    # 2. SELECTING ROI from last image created in folder ./focus
+    ROIs = press_ROIs(DIR_ROI, ORIGINAL_FOLDER)
+
+    # 3. STARTING THE OBSERVER, PROCESSING AND ANALYSING: it will find any new images
+    run_analysis(ROIs, IMG_FOLDER=IMG_FOLDER, DIR=DIR, window_size=5, framerate=2, threshold=130)
+
+
+
+if __name__ == "__main__":
+    print('hei')
+    # execute only if run as a script
+    main()
+
+
+# TODO: FIX SAVING
 

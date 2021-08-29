@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Aug 20 11:51:29 2021
-@author: willi+deborah
+@author: willi+deborah+janet
 """
 
 import os
@@ -9,12 +9,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from skimage.draw import circle, circle_perimeter
-from skimage import color
-from skimage.filters import gaussian, threshold_otsu, threshold_minimum, sobel
-from skimage.measure import label, regionprops
-from skimage.morphology import closing, opening, disk, dilation
-from skimage.io import ImageCollection, imread
-from scipy import ndimage
 from logging import getLogger
 import cv2
 
@@ -64,11 +58,9 @@ class Measure:
                     nb_pixels = nb_pixels + area 
                     
         percent_pixels = nb_pixels / len(img)
-        print('Number of pixels detected: ', nb_pixels)
-        print('Percentage of pixels detected: ', percent_pixels*100, '%')
-        
+        #print('Number of pixels detected: ', nb_pixels)
+        #print('Percentage of pixels detected: ', percent_pixels*100, '%')
         return percent_pixels
-
 
     
     def signal_perImage(self, img):
@@ -77,18 +69,20 @@ class Measure:
         connectivity = 8 #connectivity for connected components
         for cx, cy, rad in self.circles :
             self.log.info('cx, cy, rad: {},{},{}'.format(cx, cy, rad))
-            xvec, yvec = circle(cx, cy, rad)  #TODO: CHANGE TO DISK, SOME PROBLEMS HERE WITH SIZE
-            percent_pixels = self.find_GNP(img[yvec, xvec])  # S is % of pixels
+            xvec, yvec = circle(cx, cy, rad)  #TODO: change to disk
+            percent_pixels = self.find_GNP(img[yvec, xvec])  # percentage of pixels detected
             spot.append(percent_pixels)  #Changed
 
         background = np.sum(np.array(spot[-2:])) #changed to sum 
         self.log.info(f'background intensity: {background}')
         foreground = np.sum(np.array(spot[:-2])) #changed to sum 
         self.log.info(f'foreground intensity: {foreground}')
-        print('background', background)
-        print('foreground', foreground)
-        print('spot', spot)
         Signal = foreground - background
+        print('Percentage of pixels detected in each ROI (0-1)', spot)
+        print('Percentage of pixels corresponding to Background (0-1)', background)
+        print('Percentage of pixels corresponding to Foreground (0-1)', foreground)
+        print('Percentage of pixels corresponding to Signal', Signal)
+
         return Signal, foreground, background
     
            
@@ -96,12 +90,11 @@ class Measure:
 
 # You get the intensity from inside the circles for all the different images
 # What does sorted do
-    def total_intensity(self):
-        intensity = []
-        for img_arr in os.listdir(self.path) :
-
-            intensity.append(self.signal_perImage(np.load(self.path + img_arr), 70))
-        return intensity
+ #   def total_intensity(self):
+ #       intensity = []
+ #       for img_arr in os.listdir(self.path) :
+ #           intensity.append(self.signal_perImage(np.load(self.path + img_arr), 70))
+ #       return intensity
     
     
 # Compute the increase of signal over time
