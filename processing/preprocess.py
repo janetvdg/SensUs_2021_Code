@@ -16,6 +16,7 @@ from processing.processing_functions import temporal_mean_filter, save_imgs, tem
 from analysis.Analyse_results_with_connected_components import Measure
 from skimage import io
 import time
+from IPython.display import clear_output
 
 
 def load_image(filename):
@@ -106,6 +107,17 @@ def analysis(img, NAME_IMG_FOLDER, ROIs, framerate):
     
     return result
 
+
+def live_plot(x, y, figsize=(7,5), title=''):
+    #clear_output(wait=True)
+    fig = plt.figure(figsize=figsize)
+    plt.plot(x, y)
+    #plt.title(title)
+    fig.clear(True)
+    #plt.grid(True)
+    #plt.xlabel('epoch')
+    #plt.legend(loc='center left') # the plot evolves to the right
+    plt.show();
 
     
     

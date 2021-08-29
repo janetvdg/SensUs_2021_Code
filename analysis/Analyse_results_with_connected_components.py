@@ -13,6 +13,7 @@ from logging import getLogger
 import cv2
 
 
+
 # Path is the path to the results folder
 # Capture refresh time is the time between datapoints (after pre-processing)
 # Circles is the center (x,y) and radius of the ROIs
@@ -73,9 +74,9 @@ class Measure:
             percent_pixels = self.find_GNP(img[yvec, xvec])  # percentage of pixels detected
             spot.append(percent_pixels)  #Changed
 
-        background = np.sum(np.array(spot[-2:])) #changed to sum 
+        background = np.sum(np.array(spot[-2:]))/2 #changed to sum
         self.log.info(f'background intensity: {background}')
-        foreground = np.sum(np.array(spot[:-2])) #changed to sum 
+        foreground = np.sum(np.array(spot[:-2]))/(len(spot)-2) #changed to sum
         self.log.info(f'foreground intensity: {foreground}')
         Signal = foreground - background
         print('Percentage of pixels detected in each ROI (0-1)', spot)

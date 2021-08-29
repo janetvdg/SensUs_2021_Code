@@ -20,11 +20,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5acd1d87-7020-4df4-b8c6-43c779efab28" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Brightfield.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Darkfield.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/processing/processing_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/processing/processing_functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/run_parallel-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/run_parallel-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/processing/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/processing/preprocess.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_parallel.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/run_parallel.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_parallel.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_parallel.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,7 +162,7 @@
       <option name="presentableId" value="Default" />
       <updated>1630077373080</updated>
       <workItem from="1630077403872" duration="34526000" />
-      <workItem from="1630171080198" duration="15790000" />
+      <workItem from="1630171080198" duration="20363000" />
     </task>
     <servers />
   </component>
@@ -285,22 +286,22 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py</url>
-          <line>72</line>
+          <line>73</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py</url>
-          <line>71</line>
+          <line>72</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/analysis/Analyse_results_with_connected_components.py</url>
-          <line>73</line>
+          <line>74</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/run_parallel.py</url>
-          <line>122</line>
+          <line>131</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -310,7 +311,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/run_parallel.py</url>
-          <line>83</line>
+          <line>85</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
       </breakpoints>

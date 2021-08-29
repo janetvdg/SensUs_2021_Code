@@ -18,7 +18,7 @@ import matplotlib
 import os
 import pandas as pd
 from watchdog.observers import Observer
-from processing.preprocess import select_ROI_image
+from processing.preprocess import select_ROI_image, live_plot
 from processing.processing_functions import select_ROI
 import matplotlib.pyplot as plt
 #matplotlib.use('TkAgg') # This is for Mac
@@ -26,6 +26,8 @@ import numpy as np
 from processing.RunAnalysisHandler import RunAnalysisHandler
 import keyboard
 import sys
+import pylab as pl
+from IPython import display
 
 #ROIs = [[3444, 2316,  480], [1096, 2484,  480], [2348, 1456,  480], [4352,  820,  480]]
 
@@ -91,18 +93,25 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
     # sleep until keyboard interrupt, then stop + rejoin the observer
     results_list = []
 
-    fig = plt.figure()
+    #fig,ax = plt.subplots(1,1)
     try:
         while True:
             time.sleep(0.1)  # keeps main thread running
             results_list = event_analysis_handler.get_result()
             #print(results_list, 'results_list')
+            signal = [x[0] for x in results_list[1:]]
             foreground = [x[1] for x in results_list[1:]]
             background = [x[2] for x in results_list[1:]]
             timest = np.arange(0, framerate*len(foreground), framerate)
+            #live_plot(timest, signal)
+
             #print('Foreground,len', foreground, len(foreground))
-            #plt.plot(timest, background)
-            #plt.pause(1)
+            #pl.clf()
+            #pl.plot(timest, background)
+            #display.display(pl.gcf())
+            #display.clear_output(wait=True)
+            #time.sleep(1.0)
+            #plt.pause(10)  #aquest
             #plt.show()
             #plt.clf()
             if keyboard.is_pressed('s'):  # if key 's' is pressed
