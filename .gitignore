@@ -8,3 +8,6 @@ focus/*
 test.npy
 venv
 venv/*
+.ipynb_checkpoints/*
+__pychache__/*
+.idea/*
