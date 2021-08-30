@@ -47,7 +47,7 @@ def describe_folders():
     return ORIGINAL_FOLDER, IMG_PROCESSED_FOLDER, IMG_FOLDER, DIR_ROI, DIR
 
 
-def press_ROIs(DIR_ROI, ORIGINAL_FOLDER, RADIUS = 480):
+def press_ROIs(DIR_ROI, ORIGINAL_FOLDER, RADIUS = 200):
     """
     Function to select the ROIs (regions of interest), for which the analysis will be computed.
     It opens the image in DIR_ROI, you press the center where you want to locate the ROIs and returns the position and radius after closing the image.
@@ -66,7 +66,7 @@ def press_ROIs(DIR_ROI, ORIGINAL_FOLDER, RADIUS = 480):
     return ROIs
 
 
-def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshold = 130):
+def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshold = 140):
     """
     This function sets the observer to a folder (DIR) and each time a new event is detected (ex. a new image in the folder),
     it will count it, load the image, stack it and run the preprocessing and analysis.
@@ -87,7 +87,7 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
     observer.schedule(event_analysis_handler, path=DIR)  # set observer to use created handler in directory
     observer.start()  # creates a new thread
     print('OBSERVED FOLDER', DIR)
-    print('Press "s" or ctrl+c to exit and save the results')
+    print('Press ctrl+j or ctrl+c to exit and save the results')
 
 
     # sleep until keyboard interrupt, then stop + rejoin the observer
@@ -154,10 +154,10 @@ def main():
     ORIGINAL_FOLDER, IMG_PROCESSED_FOLDER, IMG_FOLDER, DIR_ROI, DIR = describe_folders()
 
     # 2. SELECTING ROI from last image created in folder ./focus
-    ROIs = press_ROIs(DIR_ROI, ORIGINAL_FOLDER)
+    ROIs = press_ROIs(DIR_ROI, ORIGINAL_FOLDER, RADIUS = 200)
 
     # 3. STARTING THE OBSERVER, PROCESSING AND ANALYSING: it will find any new images
-    run_analysis(ROIs, IMG_FOLDER=IMG_FOLDER, DIR=DIR, window_size=5, framerate=2, threshold=130)
+    run_analysis(ROIs, IMG_FOLDER=IMG_FOLDER, DIR=DIR, window_size=5, framerate=2, threshold=140)
 
 
 

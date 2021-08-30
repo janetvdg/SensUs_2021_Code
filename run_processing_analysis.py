@@ -71,9 +71,10 @@ ROIs = select_ROI(ROI_PATH)
 print('Original images shape: ', np.shape(imgs))
 
 # 1. Temporal average filter: to remove moving objects
-imgs_avg = temporal_mean_filter(imgs, 5)
+window_size = 5
+imgs_avg = temporal_mean_filter(imgs, window_size)
 print('Averaged images shape: ', np.shape(imgs_avg))
-#imgs_median = temporal_median_filter(imgs, 5)
+#imgs_median = temporal_median_filter(imgs, window_size)
 
 # 2. Background illumination intensity correction
 imgs_corrected = correct_background(imgs_avg, ORIGINAL_FOLDER)  #TODO: WARNING IMGS_AVG
@@ -84,7 +85,7 @@ imgs_inv = invert_imgs(imgs_corrected)
 print('Inverted images shape: ', np.shape(imgs_inv))
 
 # 4. Binarizing images: we will have a binary image based on a threshold
-rets, imgs_thresh = binarize_imgs(imgs_inv, tr = 130)   #TODO: FIND THRESHOLD
+rets, imgs_thresh = binarize_imgs(imgs_inv, tr = 140)
 print('Thresholded images shape: ', np.shape(imgs_thresh))
 
 # 5. Applying a mask with the ROIs
@@ -132,7 +133,7 @@ np.savetxt("result.csv", result)
     
 
 plt.figure()
-time = np.arange(0, len(signal)*framerate, framerate)
+time = np.arange(0, len(signal)*framerate*window_size, framerate*window_size)
 plt.plot(time, signal)
 plt.show()
 
