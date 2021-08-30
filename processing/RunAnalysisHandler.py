@@ -105,11 +105,28 @@ class RunAnalysisHandler(FileSystemEventHandler):
         """Function that outputs the concentration based on the shape of the calibration curve (concentration vs slope)"""
         slope = self.compute_slope()
         print('slope', slope)
-        slope_calibration = -2446.18395303  # TODO: CHANGE
-        offset = 9.59393346   # TODO: CHANGE
+        slope_calibration = 5.15135173*10**(-5)  # TODO: CHANGE
+        offset = -2.84167434*10**(-5)   # TODO: CHANGE
         self.concentration = slope*slope_calibration + offset
         #if concentration < 0.5:
          #   return 0.5
         #if concentration > 10:
          #   return 10
         return self.concentration
+    
+    def get_concentration_sigmoid(self):
+        """Function that outputs the concentration based on the shape of the calibration curve (concentration vs slope)"""
+        slope = self.compute_slope()
+        print('slope', slope)
+        
+        a_calibration = -3.015*10**(-4)
+        h_calibration = 2.6305*10**(6)
+        slope_calibration = 1.4869*10**(-1)
+        c_calibration = 2.781*10**(-4)
+        x = slope
+        
+        sigmoid_concentration = 1/(1+np.exp((x-h_calibration)/slope_calibration))*a_calibration+c_calibration
+
+        return sigmoid_concentration
+    
+    
