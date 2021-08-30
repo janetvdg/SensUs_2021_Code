@@ -3,3 +3,13 @@ images/*
 images_processed/*
 !images/.gitkeep
 !images_processed/.gitkeep
+!focus/.gitkeep
+focus/*
+test.npy
+venv
+venv/*
+.ipynb_checkpoints/*
+__pychache__/*
+.idea/*
+.idea/
+.idea

@@ -20,10 +20,10 @@ import os
 #important to import file that are not here
 #sys.path.append(os.path.abspath(path_code))
 
-from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from tkinter import filedialog, Tk
+from PIL import Image
 from processing.processing_functions import temporal_mean_filter, save_imgs, temporal_median_filter, open_images, binarize_imgs, correct_background, select_ROI, invert_imgs, mask_ROIs
 from analysis.Analyse_results_with_connected_components import Measure
 #from analysis.Select_ROI import execute_roi
@@ -71,12 +71,13 @@ ROIs = select_ROI(ROI_PATH)
 print('Original images shape: ', np.shape(imgs))
 
 # 1. Temporal average filter: to remove moving objects
-imgs_avg = temporal_mean_filter(imgs, 5)
+window_size = 5
+imgs_avg = temporal_mean_filter(imgs, window_size)
 print('Averaged images shape: ', np.shape(imgs_avg))
-#imgs_median = temporal_median_filter(imgs, 5)
+#imgs_median = temporal_median_filter(imgs, window_size)
 
 # 2. Background illumination intensity correction
-imgs_corrected = correct_background(imgs, ORIGINAL_FOLDER)  #TODO: WARNING IMGS_AVG
+imgs_corrected = correct_background(imgs_avg, ORIGINAL_FOLDER)  #TODO: WARNING IMGS_AVG
 print('Corrected images shape: ', np.shape(imgs_corrected))
 
 # 3. Inverting image (our AU-NP spots will be white ~255)
@@ -84,7 +85,7 @@ imgs_inv = invert_imgs(imgs_corrected)
 print('Inverted images shape: ', np.shape(imgs_inv))
 
 # 4. Binarizing images: we will have a binary image based on a threshold
-rets, imgs_thresh = binarize_imgs(imgs_inv, tr = 130)   #TODO: FIND THRESHOLD
+rets, imgs_thresh = binarize_imgs(imgs_inv, tr = 140)
 print('Thresholded images shape: ', np.shape(imgs_thresh))
 
 # 5. Applying a mask with the ROIs
@@ -111,16 +112,13 @@ print('Thresholded images shape: ', np.shape(imgs_thresh))
 
 #%%
 # ANALYZING IMAGES
-capture_refresh_time = framerate  # TODO
-mes = Measure(NAME_IMG_FOLDER, ROIs, capture_refresh_time)
-signal = mes.signal_perImage(img_test) #TODO: FOR LOOP AND DECIDE THRESHOLD, SAVE THIS IN .CSV
-print('final signal', signal)
-
 signal = []
 foreground = []
 background = []
 
+capture_refresh_time = framerate
 for img in imgs_thresh:
+    mes = Measure(NAME_IMG_FOLDER, ROIs, capture_refresh_time)
     result = mes.signal_perImage(img)
     signal = result[0]
     foreground = result[1]
@@ -135,7 +133,7 @@ np.savetxt("result.csv", result)
     
 
 plt.figure()
-time = np.arange(0, len(signal)*framerate, framerate)
+time = np.arange(0, len(signal)*framerate*window_size, framerate*window_size)
 plt.plot(time, signal)
 plt.show()
 
@@ -155,35 +153,9 @@ if saving == True :
 #with open('test.npy', 'wb') as f:
 #    np.save(f, par)
 
-open_saved_data = False
+open_saved_data = True
 if open_saved_data == True:
     with open('./test.npy', 'rb') as f:
         par = np.load(f, allow_pickle=True)
     [imgs, imgs_avg, NAME_IMG_FOLDER, ROIs, ROI_PATH, IMG_PATH] = list(par)
 
-#%% Test
-
-######## Testing threshold
-
-#plt.figure()
-#plt.imshow(imgs_inv[0], cmap='gray')
-#thresholds = [175, 180, 185, 190, 195, 200, 205, 210, 215, 220, 225, 230]
-#import cv2
-#fig, axes = plt.subplots(3,4)
-#for i, ax in enumerate(axes.flat):
-#    tr = thresholds[i]
-#    ret_test, img_thresh_test = cv2.threshold(imgs_inv[-1], tr, 255, cv2.THRESH_BINARY)
-#    c = ax.imshow(img_thresh_test, cmap='gray')
-#    fig.colorbar(c, ax = ax)
-#    ax.set_title('Threshold '+str(tr))
-#
-#plt.show()
-    
-#
-#img = img_thresh_test.copy()
-#
-#circles = ROIs[0]
-#spot = []
-
-#plt.figure()
-#plt.imshow(img, cmap='gray')

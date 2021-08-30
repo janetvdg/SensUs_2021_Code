@@ -6,3 +6,4 @@
 #tkinter
 #numpy
 #matplotlib
+#inotify

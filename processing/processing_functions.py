@@ -11,6 +11,7 @@ import numpy as np
 import cv2
 from processing.Select_ROI import execute_roi
 from skimage.draw import circle
+from skimage import io
 
 #    
 
@@ -28,7 +29,7 @@ def open_images(path):
         time_creation: list of dates of creation of the files
     """
     
-    imgs = [] # list with all the images (jpg or png)
+
     time_creation = [] # list with the time of creation of each image
     #parent = os.getcwd()
     #path = os.path.join(parent, PATH)
@@ -37,14 +38,23 @@ def open_images(path):
     os.chdir(path)  #TODO: NOT SURE ABOUT THIS
     files = sorted(filter(os.path.isfile, os.listdir(path)), key=os.path.getctime)  # ordering the images by date of creation
 
-    for filename in files:
+    #imgs = np.zeros((len(files), 3648, 5472))  # list with all the images (jpg or png). TODO: set to size of image
+    imgs = []
+
+    for i, filename in enumerate(files):
     #for filename in sorted(os.listdir(path)):
         if filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg'):
             img_path = os.path.join(path, filename)
             time_creation.append(os.stat(filename).st_ctime)
             #print(img_path)
+            #imgs[i,:,:] = np.array(Image.open(img_path))
             img = np.array(Image.open(img_path))
             imgs.append(img) #appending the image to the list
+
+        elif filename.endswith('tiff') or filename.endswith('tif'):
+            #imgs[i,:,:] = np.array(io.imread(filename))
+            img = np.array(io.imread(filename))
+            imgs.append(img)
             
         else:
             continue
@@ -53,7 +63,7 @@ def open_images(path):
 
 #files.sort(key=os.path.getctime)
 
-def select_ROI(ROI_PATH, scale_f = 4, RADIUS = 480):
+def select_ROI(ROI_PATH, scale_f = 4, RADIUS = 200):
     """
     Function to select ROIs
     input:
@@ -72,7 +82,7 @@ def select_ROI(ROI_PATH, scale_f = 4, RADIUS = 480):
     return ROIs
 
 
-def temporal_median_filter(imgs, size_kernel):
+def temporal_median_filter(imgs, size_kernel_):
     """ Temporal median filter
     
     Performs temporal median filter without overlapping.
@@ -82,9 +92,10 @@ def temporal_median_filter(imgs, size_kernel):
     size_kernel: number of frames over which computes median filter
     
     """
-    print('\n Computing temporal median filter with kernel size ', size_kernel, '...')
+    print('\n Computing temporal median filter with kernel size ', size_kernel_, '...')
     imgs_med = []
    
+    size_kernel = size_kernel_-1
     for i in np.arange(0, len(imgs)//size_kernel) :  
         try:
             seq = np.stack(imgs[i*(size_kernel+1):(size_kernel*(i+1)+i)], axis = 2)  #TODO: use last images as well
@@ -96,7 +107,7 @@ def temporal_median_filter(imgs, size_kernel):
     return imgs_med
 
 
-def temporal_mean_filter(imgs, size_kernel):
+def temporal_mean_filter(imgs, size_kernel_):
     """ Temporal mean filter
     
     Performs temporal average filter without overlapping
@@ -105,18 +116,20 @@ def temporal_mean_filter(imgs, size_kernel):
     size_kernel: number of frames over which computes median filter
     
     """
-    print('\n Computing temporal average filter with kernel size ', size_kernel, '...')
+    print('\n Computing temporal average filter with kernel size ', size_kernel_, '...')
     imgs_med = []
     
+    size_kernel = size_kernel_-1
     for i in np.arange(0, len(imgs)//size_kernel) :
-        print('Computing window from '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
+        #print('Computing window from '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
         try: 
             seq = np.stack(imgs[i*(size_kernel+1):(size_kernel*(i+1)+i)], axis = 2)  #TODO: use last images as well
             batch = np.mean(seq, axis = 2).astype(np.uint8)
             imgs_med.append(batch)
         except:
-            print('Number of images = '+str(len(imgs)))
-            print('Could not compute window with indices '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
+            continue
+            #print('Number of images = '+str(len(imgs)))
+            #print('Could not compute window with indices '+str(i*(size_kernel+1))+' to '+ str((size_kernel*(i+1)+i)))
     
     return imgs_med
 
@@ -137,9 +150,12 @@ def correct_background(imgs, path):
     #TODO: THIS WAY IS NOT THE BEST TO GET THE WORKING DIRECTORY, SOMETIMES IT DOES NOT WORK
     #path = os.path.dirname(os.path.realpath('processing_functions.py'))  # Working directory needs to be in main folder SensUs_Code_2021
     os.chdir(path)
-    darkfield = np.array(Image.open(os.path.join("Darkfield.png")))
-    brightfield = np.array(Image.open(os.path.join("Brightfield.png")))
-    
+    #darkfield = np.array(Image.open(os.path.join("Darkfield.png")))
+    #brightfield = np.array(Image.open(os.path.join("Brightfield.png")))
+    darkfield = np.array(io.imread(os.path.join("Darkfield.tiff")))
+    brightfield = np.array(io.imread(os.path.join("Brightfield.tiff")))
+
+
     print('Correcting background illumination intensity...')
     for img in imgs:
         specimen = img
@@ -194,7 +210,7 @@ def invert_imgs(imgs):
     return imgs_inv
 
 
-def mask_ROIs(imgs, ROIs):  #TODO: MAKE IT WORK
+def mask_ROIs(imgs, ROIs):
     '''
     Function that applies a mask to the image using the ROIs
     input:
@@ -235,21 +251,6 @@ def save_imgs(imgs, path, name):
     for i in np.arange(0, len(imgs)):
         Image.fromarray(imgs[i]).save(os.path.join(path, name+str(i)+'.png'))
         
-        
-
-
-
-
-#mean of all images or take median filter (removing moving objects)
-#remove background: 2nd or 3rd polynomial
-#threshold every pixel: determining it manually looking at pixel
-        
-# Histogram
-    
-    
-# images normalized to 1
-    
-
 
 
 
@@ -265,6 +266,7 @@ from numpy.polynomial.polynomial import polyval2d
 
 def polyfit2d(x, y, f, deg):   #TODO: TRY THIS POLY TO IMAGE WITH ONLY LIGHT
     '''
+    Function from SensUs 2019
     Fits a 2d polynomial of degree deg to the points f where f is the value of point [x,y]
     '''
     x = np.asarray(x)
@@ -280,6 +282,7 @@ def polyfit2d(x, y, f, deg):   #TODO: TRY THIS POLY TO IMAGE WITH ONLY LIGHT
 
 def smooth_background(img, rescale_factor=0.1, poly_deg=[2,2]):
     '''
+    Function from SensUs 2019
     Smooths the background of the image by modeling the background with a polynomial 
     surface by regression on the local maximum intensity peaks and dividing the original
     image by this surface.
@@ -311,37 +314,3 @@ def smooth_background(img, rescale_factor=0.1, poly_deg=[2,2]):
 
     background = np.transpose(polyval2d(xx, yy, p))
     return background
-
-
-#%%
-#import os
-#path = os.getcwd()  # Working directory needs to be in main folder SensUs_Code_2021
-#
-#darkfield = np.array(Image.open(os.path.join("Darkfield.png")))
-#brightfield = np.array(Image.open(os.path.join("Brightfield.png")))
-#specimen = np.array(Image.open(os.path.join("Specimen.png")))
-#
-#corrected_img = (specimen - darkfield) / (brightfield - darkfield) * 255
-#
-#a = [specimen, darkfield, brightfield, corrected_img]
-#fig, axes = plt.subplots(2,2)
-#for i, ax in enumerate(axes.flat):
-#    c = ax.imshow(a[i], cmap='gray')
-#    fig.colorbar(c, ax = ax)
-    #ax.set_title('Threshold '+str(tr))
-    #%%
-
-
-#test = imgs[0]
-#background = smooth_background(test)
-#plt.imshow(background)
-
-
-
-
-## ANALYZING IMAGES
-# Now that the ROIs have been selected we need to analyse the results in our folder
-#capture_refresh_time = 2 # TODO
-#mes = Measure(results_folder, ROIs, capture_refresh_time)
-#slope, concentration = mes.execute_analysis()
-#print(slope,concentration)
