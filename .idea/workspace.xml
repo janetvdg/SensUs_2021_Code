@@ -19,11 +19,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5acd1d87-7020-4df4-b8c6-43c779efab28" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_parallel.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/run_parallel.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_parallel_notes.ipynb" beforeDir="false" />
-    </list>
+    <list default="true" id="5acd1d87-7020-4df4-b8c6-43c779efab28" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -105,6 +101,9 @@
       <module name="SensUs_2021_Code" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -159,7 +158,7 @@
       <option name="presentableId" value="Default" />
       <updated>1630077373080</updated>
       <workItem from="1630077403872" duration="34526000" />
-      <workItem from="1630171080198" duration="23609000" />
+      <workItem from="1630171080198" duration="26450000" />
     </task>
     <servers />
   </component>
@@ -195,41 +194,41 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="458" y="202" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1440.900@0.0.1440.900" timestamp="1630174167792" />
-    <state width="699" height="304" key="GridCell.Tab.0.bottom" timestamp="1630227747647">
+    <state width="699" height="304" key="GridCell.Tab.0.bottom" timestamp="1630314109005">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="699" height="304" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1630227747647" />
-    <state width="699" height="304" key="GridCell.Tab.0.center" timestamp="1630227747645">
+    <state width="699" height="304" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1630314109005" />
+    <state width="699" height="304" key="GridCell.Tab.0.center" timestamp="1630314108994">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="699" height="304" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1630227747645" />
-    <state width="699" height="304" key="GridCell.Tab.0.left" timestamp="1630227747643">
+    <state width="699" height="304" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1630314108994" />
+    <state width="699" height="304" key="GridCell.Tab.0.left" timestamp="1630314108991">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="699" height="304" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1630227747643" />
-    <state width="699" height="304" key="GridCell.Tab.0.right" timestamp="1630227747646">
+    <state width="699" height="304" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1630314108991" />
+    <state width="699" height="304" key="GridCell.Tab.0.right" timestamp="1630314108995">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="699" height="304" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1630227747646" />
-    <state width="699" height="304" key="GridCell.Tab.1.bottom" timestamp="1630227747651">
+    <state width="699" height="304" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1630314108995" />
+    <state width="699" height="304" key="GridCell.Tab.1.bottom" timestamp="1630314109008">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="699" height="304" key="GridCell.Tab.1.bottom/0.0.1440.900@0.0.1440.900" timestamp="1630227747651" />
+    <state width="699" height="304" key="GridCell.Tab.1.bottom/0.0.1440.900@0.0.1440.900" timestamp="1630314109008" />
     <state width="1398" height="304" key="GridCell.Tab.1.bottom/0.25.1440.806@0.25.1440.806" timestamp="1630083875586" />
-    <state width="699" height="304" key="GridCell.Tab.1.center" timestamp="1630227747650">
+    <state width="699" height="304" key="GridCell.Tab.1.center" timestamp="1630314109007">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="699" height="304" key="GridCell.Tab.1.center/0.0.1440.900@0.0.1440.900" timestamp="1630227747650" />
+    <state width="699" height="304" key="GridCell.Tab.1.center/0.0.1440.900@0.0.1440.900" timestamp="1630314109007" />
     <state width="1398" height="304" key="GridCell.Tab.1.center/0.25.1440.806@0.25.1440.806" timestamp="1630083875584" />
-    <state width="699" height="304" key="GridCell.Tab.1.left" timestamp="1630227747648">
+    <state width="699" height="304" key="GridCell.Tab.1.left" timestamp="1630314109006">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="699" height="304" key="GridCell.Tab.1.left/0.0.1440.900@0.0.1440.900" timestamp="1630227747648" />
+    <state width="699" height="304" key="GridCell.Tab.1.left/0.0.1440.900@0.0.1440.900" timestamp="1630314109006" />
     <state width="1398" height="304" key="GridCell.Tab.1.left/0.25.1440.806@0.25.1440.806" timestamp="1630083875583" />
-    <state width="699" height="304" key="GridCell.Tab.1.right" timestamp="1630227747650">
+    <state width="699" height="304" key="GridCell.Tab.1.right" timestamp="1630314109008">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="699" height="304" key="GridCell.Tab.1.right/0.0.1440.900@0.0.1440.900" timestamp="1630227747650" />
+    <state width="699" height="304" key="GridCell.Tab.1.right/0.0.1440.900@0.0.1440.900" timestamp="1630314109008" />
     <state width="1398" height="304" key="GridCell.Tab.1.right/0.25.1440.806@0.25.1440.806" timestamp="1630083875585" />
     <state x="259" y="119" key="SettingsEditor" timestamp="1630169570516">
       <screen x="0" y="0" width="1440" height="900" />
@@ -263,7 +262,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/processing/processing_functions.py</url>
-          <line>45</line>
+          <line>46</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -298,7 +297,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/run_parallel.py</url>
-          <line>131</line>
+          <line>133</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

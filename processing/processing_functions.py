@@ -38,7 +38,8 @@ def open_images(path):
     os.chdir(path)  #TODO: NOT SURE ABOUT THIS
     files = sorted(filter(os.path.isfile, os.listdir(path)), key=os.path.getctime)  # ordering the images by date of creation
 
-    imgs = np.zeros((len(files), 3648, 5472))  # list with all the images (jpg or png). TODO: set to size of image
+    #imgs = np.zeros((len(files), 3648, 5472))  # list with all the images (jpg or png). TODO: set to size of image
+    imgs = []
 
     for i, filename in enumerate(files):
     #for filename in sorted(os.listdir(path)):
@@ -46,11 +47,14 @@ def open_images(path):
             img_path = os.path.join(path, filename)
             time_creation.append(os.stat(filename).st_ctime)
             #print(img_path)
-            imgs[i,:,:] = np.array(Image.open(img_path))
-            #imgs.append(img) #appending the image to the list
+            #imgs[i,:,:] = np.array(Image.open(img_path))
+            img = np.array(Image.open(img_path))
+            imgs.append(img) #appending the image to the list
 
         elif filename.endswith('tiff') or filename.endswith('tif'):
-            imgs[i,:,:] = np.array(io.imread(filename))
+            #imgs[i,:,:] = np.array(io.imread(filename))
+            img = np.array(io.imread(filename))
+            imgs.append(img)
             
         else:
             continue
