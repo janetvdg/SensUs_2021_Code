@@ -83,7 +83,7 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
 
     # Observer for running the analysis
     observer = Observer()
-    event_analysis_handler = RunAnalysisHandler(ROIs, window_size=window_size, IMG_FOLDER=IMG_FOLDER, framerate=framerate, threshold=threshold)  # create event handler
+    event_analysis_handler = RunAnalysisHandler(ROIs, window_size=window_size, IMG_FOLDER=IMG_FOLDER, framerate=framerate, threshold=threshold, DIR=DIR)  # create event handler
     observer.schedule(event_analysis_handler, path=DIR)  # set observer to use created handler in directory
     observer.start()  # creates a new thread
     print('OBSERVED FOLDER', DIR)

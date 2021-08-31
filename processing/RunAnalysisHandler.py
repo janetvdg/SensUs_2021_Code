@@ -17,10 +17,11 @@ from processing.processing_functions import temporal_mean_filter, save_imgs, tem
 from analysis.Analyse_results_with_connected_components import Measure
 from skimage import io
 import time
+import timeit
 
 
 class RunAnalysisHandler(FileSystemEventHandler):
-    def __init__(self, ROIs, IMG_FOLDER, window_size=5, threshold=130, framerate=2):
+    def __init__(self, ROIs, IMG_FOLDER, DIR, window_size=5, threshold=130, framerate=2):
         self.num_events = 0
         self.window_size = window_size
         self.threshold = threshold
@@ -30,21 +31,25 @@ class RunAnalysisHandler(FileSystemEventHandler):
         self.result = []
         self.ROIs = ROIs
         self.IMG_FOLDER = IMG_FOLDER
+        self.img_thresh = []
         self.results_list = [[]]
         self.log = False
         self.concentration = 0
         self.concentration_exponential = 0
+        self.counter = 0
+        self.DIR = DIR
 
     def process_analyse(self):
         """Function that computes the pre-processing of the images and the analysis based on single pixel count in the ROIs"""
-        img_avg, img_thresh = preprocess(self.imgs, self.window_size, self.threshold, self.ORIGINAL_FOLDER)
+        img_avg, self.img_thresh = preprocess(self.imgs, self.window_size, self.threshold, self.ORIGINAL_FOLDER)
         signal = []
         foreground = []
         background = []
 
         mes = Measure(self.IMG_FOLDER, self.ROIs, self.framerate)
-        self.result = mes.signal_perImage(img_thresh[0])  # I select 0 because it's a list with one single element
-
+        self.result = mes.signal_perImage(self.img_thresh[0])  # I select 0 because it's a list with one single element
+        self.counter+=1
+        np.save(str(self.DIR)+"/img_thresh"+str(self.counter)+".npy", self.img_thresh)
         return self.result
 
     def on_created(self, event):  # when file is created
