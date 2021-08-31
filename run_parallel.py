@@ -128,10 +128,9 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
                 results_df['Concentration'] = pd.Series([concentration for x in range(len(results_df.index))])
                 results_df.to_csv(str(DIR)+'/result.csv', index=True)
                 
-                concentration_sigmoid = event_analysis_handler.get_concentration_sigmoid()
-                print('concentration sigmoid', concentration_sigmoid)
+                concentration_exponential = event_analysis_handler.get_concentration_exponential()
                 print('Saving results as result.csv')
-                results_df['Concentration sigmoid'] = pd.Series([concentration_sigmoid for x in range(len(results_df.index))])
+                results_df['Concentration exponential'] = pd.Series([concentration_exponential for x in range(len(results_df.index))])
                 results_df.to_csv(str(DIR)+'/result.csv', index=True)
                 
                 
@@ -144,18 +143,15 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
         results_df = pd.DataFrame(results_list, columns=('Signal', 'Foreground', 'Background'))
         results_df.to_csv(str(DIR) + '/result.csv', index=True)
         concentration = event_analysis_handler.get_concentration()
-        concentration_sigmoid = event_analysis_handler.get_concentration_sigmoid()
         print('concentration', concentration)
         # saving results as csv
         results_df['Concentration'] = pd.Series([concentration for x in range(len(results_df.index))])
         results_df.to_csv(str(DIR)+'/result.csv', index=True)
         
-        concentration_sigmoid = event_analysis_handler.get_concentration_sigmoid()
-        print('concentration sigmoid', concentration_sigmoid)
+        concentration_exponential = event_analysis_handler.get_concentration_exponential()
         print('Saving results as result.csv')
-        results_df['Concentration sigmoid'] = pd.Series([concentration_sigmoid for x in range(len(results_df.index))])
+        results_df['Concentration exponential'] = pd.Series([concentration_exponential for x in range(len(results_df.index))])
         results_df.to_csv(str(DIR)+'/result.csv', index=True)
-                
         #quit()
         sys.exit()
     observer.join() # is needed to proper end a thread for "it blocks the thread in which you're making the call, until (self.observer) is finished
