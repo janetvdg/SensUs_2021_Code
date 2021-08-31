@@ -33,16 +33,6 @@ def general_cleaning_procedure(lsp):
 def pick_BB(lsp):
     lsp.write(b"/1V5M200B6M1000A480M1000V300M200B3M1000A510M1000B6M1000V5M200R\r")
 
-def push_pull_sample(lsp, n_times):
-    if n_times == 1:
-        lsp.write(b"/1V5M1000A660M1000A510M1000R\r")
-    elif n_times == 2:
-        lsp.write(b"/1V5M1000A660M1000A510M1000A660M1000A510M1000R\r")
-    elif n_times == 3:
-        lsp.write(b"/1V5M1000A660M1000A510M1000A660M1000A510M1000A660M1000A510M1000R\r")
-    elif n_times == 4:
-        lsp.write(b"/1V5M1000A660M1000A510M1000A660M1000A510M1000A660M1000A510M1000A660M1000A510M1000R\r")
-
 
 def general_cleaning_procedure_fast(lsp):
     start_s = b"/1V300M200" #start with speed 3000 ul/min
@@ -56,7 +46,7 @@ def general_cleaning_procedure_fast(lsp):
 def push_pull_sample_n_times(lsp,n):
     start_s = b"/1V5M1000B6M1000"
     push_pull = b"A660M1000A510M1000"
-    end_s = b"R\r"
+    end_s = b"B6M200R\r"
     lsp.write(start_s+n*push_pull+end_s)
 
 
@@ -66,7 +56,9 @@ def air_cleaning(lsp):
 
 def pick_BB_again(lsp):
     # IN CASE BB IS NOT MOVING
-    # Start picking BB again at 100 ul/min
-    #Empty syringe
-    lsp.write(b"/1V150B1M1000A0M1000RV10M200B6M1000A480M1000R\r")
+    # Empty syringe and start picking BB again at 100 ul/min
+    lsp.write(b"/1V150B1M1000A0M1000V10M200B6M1000A480M1000R\r")
+    
+def empty_syringe(lsp):
+    lsp.write(b"/1V150B1M1000A0M1000R\r")
 

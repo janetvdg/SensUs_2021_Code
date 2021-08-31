@@ -91,6 +91,8 @@ class RunAnalysisHandler(FileSystemEventHandler):
 
     def compute_slope(self):
         """Function that fits a linear function to the results and outputs the slope"""
+        #TODO: ADD FILTER BEFORE?
+        
         y = [x[0] for x in self.results_list[1:]]  # taking the Signal (and ignoring first element which is an empty list)
         time_step = self.framerate*self.window_size
         x = np.arange(0, len(y)*time_step, time_step)
@@ -119,14 +121,14 @@ class RunAnalysisHandler(FileSystemEventHandler):
         slope = self.compute_slope()
         print('slope', slope)
         
-        a_calibration = -3.015*10**(-4)
-        h_calibration = 2.6305*10**(6)
-        slope_calibration = 1.4869*10**(-1)
-        c_calibration = 2.781*10**(-4)
+        a = 267.1
+        b = -4140
+        c = -148.1
+        
         x = slope
         
-        sigmoid_concentration = 1/(1+np.exp((x-h_calibration)/slope_calibration))*a_calibration+c_calibration
-
+        sigmoid_concentration = a*np.exp(-b*x) + c
+        
         return sigmoid_concentration
     
     
