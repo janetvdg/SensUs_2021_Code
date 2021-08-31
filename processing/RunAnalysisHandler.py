@@ -4,7 +4,7 @@ from watchdog.events import FileSystemEventHandler
 import numpy as np
 import os
 from processing.preprocess import preprocess, load_image, analysis
-from processing.processing_functions import select_ROI
+from processing.processing_functions import select_ROI, compute_concentration_exponential, compute_concentration_linear
 from analysis.Analyse_results_with_connected_components import Measure
 import matplotlib.pyplot as plt
 import sys
@@ -33,6 +33,7 @@ class RunAnalysisHandler(FileSystemEventHandler):
         self.results_list = [[]]
         self.log = False
         self.concentration = 0
+        self.concentration_exponential = 0
 
     def process_analyse(self):
         """Function that computes the pre-processing of the images and the analysis based on single pixel count in the ROIs"""
@@ -89,46 +90,18 @@ class RunAnalysisHandler(FileSystemEventHandler):
         # print(self.results_list, 'result list self')
         return self.results_list
 
-    def compute_slope(self):
-        """Function that fits a linear function to the results and outputs the slope"""
-        #TODO: ADD FILTER BEFORE?
-        
-        y = [x[0] for x in self.results_list[1:]]  # taking the Signal (and ignoring first element which is an empty list)
-        time_step = self.framerate*self.window_size
-        x = np.arange(0, len(y)*time_step, time_step)
-        print('y', y)
-        print('x', x)
-        # Fitting a linear function
-        reg_lin = np.polyfit(x, y, 1)   # TODO: CHANGE??
-        print('reg_lin', reg_lin)
-        return reg_lin[0]
-
     def get_concentration(self):
-        """Function that outputs the concentration based on the shape of the calibration curve (concentration vs slope)"""
-        slope = self.compute_slope()
-        print('slope', slope)
-        slope_calibration = 5.15135173*10**(-5)  # TODO: CHANGE
-        offset = -2.84167434*10**(-5)   # TODO: CHANGE
-        self.concentration = slope*slope_calibration + offset
-        #if concentration < 0.5:
-         #   return 0.5
-        #if concentration > 10:
-         #   return 10
+        y = [x[0] for x in self.results_list[1:]]  # taking the Signal (and ignoring first element which is an empty list)
+        time_step = self.framerate * self.window_size
+        x = np.arange(0, len(y) * time_step, time_step)
+        self.concentration = compute_concentration_linear(x, y)
         return self.concentration
     
-    def get_concentration_sigmoid(self):
-        """Function that outputs the concentration based on the shape of the calibration curve (concentration vs slope)"""
-        slope = self.compute_slope()
-        print('slope', slope)
-        
-        a = 267.1
-        b = -4140
-        c = -148.1
-        
-        x = slope
-        
-        sigmoid_concentration = a*np.exp(-b*x) + c
-        
-        return sigmoid_concentration
+    def get_concentration_exponential(self):
+        y = [x[0] for x in self.results_list[1:]]  # taking the Signal (and ignoring first element which is an empty list)
+        time_step = self.framerate * self.window_size
+        x = np.arange(0, len(y) * time_step, time_step)
+        self.concentration_exponential = compute_concentration_exponential(x, y)
+        return self.concentration_exponential
     
     

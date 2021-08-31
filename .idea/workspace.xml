@@ -20,10 +20,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5acd1d87-7020-4df4-b8c6-43c779efab28" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/run_parallel2.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pump.py" beforeDir="false" afterPath="$PROJECT_DIR$/pump.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_parallel.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/run_parallel-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/run_parallel-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RUN_PARALLEL.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/RUN_PARALLEL.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/processing/RunAnalysisHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/processing/RunAnalysisHandler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/processing/processing_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/processing/processing_functions.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -164,7 +165,7 @@
       <updated>1630077373080</updated>
       <workItem from="1630077403872" duration="34526000" />
       <workItem from="1630171080198" duration="26450000" />
-      <workItem from="1630315676236" duration="1853000" />
+      <workItem from="1630315676236" duration="4644000" />
     </task>
     <servers />
   </component>
@@ -258,17 +259,17 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/processing/processing_functions.py</url>
-          <line>38</line>
+          <line>39</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/processing/processing_functions.py</url>
-          <line>40</line>
+          <line>41</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/processing/processing_functions.py</url>
-          <line>46</line>
+          <line>47</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -303,7 +304,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/run_parallel.py</url>
-          <line>133</line>
+          <line>142</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

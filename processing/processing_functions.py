@@ -12,6 +12,7 @@ import cv2
 from processing.Select_ROI import execute_roi
 from skimage.draw import circle
 from skimage import io
+import numpy as np
 
 #    
 
@@ -237,6 +238,38 @@ def mask_ROIs(imgs, ROIs):
         imgs_masked.append(img*mask)
         
     return imgs_masked
+
+def compute_slope(x, y):
+    """Function that fits a linear function to the results and outputs the slope"""
+    # TODO: ADD FILTER BEFORE?
+    print('y', y)
+    print('x', x)
+    # Fitting a linear function
+    reg_lin = np.polyfit(x, y, 1)  # TODO: CHANGE??
+    print('reg_lin', reg_lin)
+    return reg_lin[0]  #y=ax+b, outputs a and b
+
+def compute_concentration_linear(x, y):
+    """Function that outputs the concentration based on the shape of the calibration curve (concentration vs slope)"""
+    slope = compute_slope(x, y)
+    print('slope', slope)
+    a = 8.357 * 10 ** (6)
+    b = -323.1
+    concentration = slope * a + b
+    print('CONCENTRATION FROM LINEAR FIT: ', concentration, 'pg')
+    return concentration
+
+def compute_concentration_exponential(x, y):
+    """Function that outputs the concentration based on the shape of the calibration curve (slope vs concentration)"""
+    slope = compute_slope(x, y)
+    print('slope', slope)
+    a = 2050
+    b = -1616
+    c = -2022
+    x = slope
+    concentration = a * np.exp(-b * x) + c  # Results in pg
+    print('CONCENTRATION FROM EXPONENTIAL FIT: ', concentration, 'pg')
+    return concentration
 
 
 
