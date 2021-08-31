@@ -43,10 +43,17 @@ def general_cleaning_procedure_fast(lsp):
 
 
     # Push pull sample for 69s each
+#def push_pull_sample_n_times(lsp,n):
+ #   start_s = b"/1V5M1000B6M1000"
+ #   push_pull = b"A660M1000A510M1000"
+ #   end_s = b"B6M200R\r"
+ #   lsp.write(start_s+n*push_pull+end_s)
+    
+# push_pull_sample_n_times, each time takes 69s
 def push_pull_sample_n_times(lsp,n):
     start_s = b"/1V5M1000B6M1000"
     push_pull = b"A660M1000A510M1000"
-    end_s = b"B6M200R\r"
+    end_s = b"R\r"
     lsp.write(start_s+n*push_pull+end_s)
 
 

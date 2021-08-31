@@ -132,8 +132,7 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
                 print('Saving results as result.csv')
                 results_df['Concentration exponential'] = pd.Series([concentration_exponential for x in range(len(results_df.index))])
                 results_df.to_csv(str(DIR)+'/result.csv', index=True)
-                
-                
+
                 #quit()
                 sys.exit()
                 
