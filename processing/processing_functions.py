@@ -14,6 +14,8 @@ from skimage.draw import circle
 from skimage import io
 import numpy as np
 import pandas as pd
+from scipy.stats import linregress
+import copy
 
 #    
 
@@ -253,18 +255,22 @@ def compute_slope(x, y):
     print('y', y)
     print('x', x)
     # Fitting a linear function
-    reg_lin = np.polyfit(x, y, 1)  # TODO: CHANGE??
-    print('reg_lin', reg_lin)
-    return reg_lin[0]  #y=ax+b, outputs a and b
+    #reg_lin = np.polyfit(x, y, 1)  # TODO: CHANGE??
+    slope_n, intercept_n, r_n, p_n, se_n = linregress(x, y)
+    print('reg_lin', slope_n, intercept_n, r_n, p_n, se_n)
+    
+    return slope_n  #y=ax+b, outputs a and b
 
 def compute_concentration_linear(x, y):
-    """Function that outputs the concentration based on the shape of the calibration curve (concentration vs slope)"""
+    """Function that outputs the concentration based on the shape of the calibration curve (slope vs concentration)"""
     slope = compute_slope(x, y)
     print('slope', slope)
     a = 8.357 * 10 ** (6)
     b = -323.1
     concentration = slope * a + b
+    print('\n=========================================================================================')
     print('CONCENTRATION FROM LINEAR FIT: ', concentration, 'pg')
+    print('=========================================================================================\n')
     return concentration
 
 def compute_concentration_exponential(x, y):
@@ -276,20 +282,29 @@ def compute_concentration_exponential(x, y):
     c = -2022
     x = slope
     concentration = a * np.exp(-b * x) + c  # Results in pg
+    print('\n=========================================================================================')
     print('CONCENTRATION FROM EXPONENTIAL FIT: ', concentration, 'pg')
+    print('=========================================================================================\n')
     return concentration
 
 def compute_concentration_3rd_polynomial(x,y): 
     slope = compute_slope(x, y)
     print('slope', slope)
-    a = 7.159e-06
-    b = 3.36e-05
-    c = -3.174e-06
-    d = -0.0001541
+    a = 5.333e-05 #7.159e-06
+    b = -9.244e-05 #3.36e-05
+    c = -0.0002021 #-3.174e-06
+    d = 0.0003536 #-0.0001541
     X = slope
-    concentration = 10**((a*X**3) + (b*X**2) + (c*X) + d) # Results in pg
-    print('CONCENTRATION FROM 3rd POLYNOMIAL FIT: ', concentration, 'pg')
+  
+    coeff = [a,b,c,d-X]
+    solution = np.roots(coeff)
+    concentration = 10**(solution) # Results in pg
+    concentration = concentration[2]
+    print('\n=========================================================================================')
+    print('CONCENTRATION FROM 3rd POLYNOMIAL FIT: ', concentration, 'pg', ' rounded to', concentration, 'pg')
+    print('=========================================================================================\n')
     return concentration
+
 
 def save_imgs(imgs, path, name):
     print('Saving images in '+str(path)+'...')
@@ -303,6 +318,36 @@ def save_imgs(imgs, path, name):
         Image.fromarray(imgs[i]).save(os.path.join(path, name+str(i)+'.png'))
         
 
+def puredatalist(data):
+    data_dict=data.to_dict()
+    data_s=list(data_dict['Signal'].items())
+    pure_data=[y[1] for y in data_s]
+    
+    return pure_data
+
+#remove outliers accordingb to deviation of the predicted compared to the origins
+def replacewithpredvalue(odata, ndata):
+    diff=abs(odata-ndata)
+    pos=diff.argsort()[-3:][::-1]
+    for index in range(len(pos)):
+        odata[pos[index]] = ndata[index]
+    return odata
+
+    
+def remove_outliers(data_y):
+   # data_value=np.array(puredatalist(data[i]))
+    data_value = data_y
+    value_tuple=(np.mean(data_value),np.std(data_value))
+    x=np.array(range(len(data_value)))+1
+    y=copy.deepcopy(data_value)
+    slope, intercept, r, p, se = linregress(x, y)
+    #remove outliers
+    ny=intercept+slope*x
+    new_data_value=replacewithpredvalue(data_value,ny)
+    #new gradient and correlation below
+    slope_n, intercept_n, r_n, p_n, se_n = linregress(x, new_data_value)
+    
+    return new_data_value
 
 
 #%%Background smoothing functions (from SensUs 2019)

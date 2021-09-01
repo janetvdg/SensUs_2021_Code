@@ -98,7 +98,6 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
         while True:
             time.sleep(0.1)  # keeps main thread running
             results_list = event_analysis_handler.get_result()
-            #print(results_list, 'results_list')
             signal = [x[0] for x in results_list[1:]]
             foreground = [x[1] for x in results_list[1:]]
             background = [x[2] for x in results_list[1:]]
@@ -117,7 +116,7 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
             if keyboard.is_pressed('ctrl+j'):  # if key 'ctrl+j' is pressed
                 print('You Pressed a Key!')
                 observer.stop()  # when program stops, it does some work before terminating the thread
-                print('Last results list (you pressed "ctrl+j")', results_list)
+                #print('Last results list (you pressed "ctrl+j")', results_list)
                 results_df = pd.DataFrame(results_list, columns=('Signal', 'Foreground', 'Background'))
                 results_df.to_csv(str(DIR) + '/result.csv', index=True)
                 concentration = event_analysis_handler.get_concentration()
@@ -133,10 +132,7 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
                 results_df['Concentration exponential'] = pd.Series([concentration_exponential for x in range(len(results_df.index))])
                 results_df.to_csv(str(DIR)+'/result.csv', index=True)
                 
-                print("Jaja")
-                
                 concentration_3poly = event_analysis_handler.get_concentration_3rd_polynomial()
-                print("Wiwi")
                 print('Saving results as result.csv')
                 results_df['Concentration 3rd polynomial'] = pd.Series([concentration_3poly for x in range(len(results_df.index))])
                 results_df.to_csv(str(DIR)+'/result.csv', index=True)
@@ -146,7 +142,7 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
                 
     except (KeyboardInterrupt, SystemExit):  # When pressing ctrl-c (at the end of the acquisition)
         observer.stop()  # when program stops, it does some work before terminating the thread
-        print('Last results list', results_list)
+        #print('Last results list', results_list)
         results_df = pd.DataFrame(results_list, columns=('Signal', 'Foreground', 'Background'))
         results_df.to_csv(str(DIR) + '/result.csv', index=True)
         concentration = event_analysis_handler.get_concentration()
@@ -159,11 +155,8 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
         print('Saving results as result.csv')
         results_df['Concentration exponential'] = pd.Series([concentration_exponential for x in range(len(results_df.index))])
         results_df.to_csv(str(DIR)+'/result.csv', index=True)
-        
-        print("Jaja")
                 
         concentration_3poly = event_analysis_handler.get_concentration_3rd_polynomial()
-        print("Wiwi")
         print('Saving results as result.csv')
         results_df['Concentration 3rd polynomial'] = pd.Series([concentration_3poly for x in range(len(results_df.index))])
         results_df.to_csv(str(DIR)+'/result.csv', index=True)
