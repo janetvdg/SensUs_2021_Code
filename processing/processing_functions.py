@@ -13,6 +13,7 @@ from processing.Select_ROI import execute_roi
 from skimage.draw import circle
 from skimage import io
 import numpy as np
+import pandas as pd
 
 #    
 
@@ -239,6 +240,13 @@ def mask_ROIs(imgs, ROIs):
         
     return imgs_masked
 
+
+def moving_average(results_df):
+    #pd.DataFrame(results_df.iloc[:,0:2].rolling(window=3).mean())
+    df = pd.DataFrame(results_df.rolling(window=3).mean())
+    return df.dropna()
+    
+
 def compute_slope(x, y):
     """Function that fits a linear function to the results and outputs the slope"""
     # TODO: ADD FILTER BEFORE?
@@ -271,7 +279,17 @@ def compute_concentration_exponential(x, y):
     print('CONCENTRATION FROM EXPONENTIAL FIT: ', concentration, 'pg')
     return concentration
 
-
+def compute_concentration_3rd_polynomial(x,y): 
+    slope = compute_slope(x, y)
+    print('slope', slope)
+    a = 7.159e-06
+    b = 3.36e-05
+    c = -3.174e-06
+    d = -0.0001541
+    X = slope
+    concentration = 10**((a*X**3) + (b*X**2) + (c*X) + d) # Results in pg
+    print('CONCENTRATION FROM 3rd POLYNOMIAL FIT: ', concentration, 'pg')
+    return concentration
 
 def save_imgs(imgs, path, name):
     print('Saving images in '+str(path)+'...')

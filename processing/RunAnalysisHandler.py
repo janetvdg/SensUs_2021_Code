@@ -4,7 +4,7 @@ from watchdog.events import FileSystemEventHandler
 import numpy as np
 import os
 from processing.preprocess import preprocess, load_image, analysis
-from processing.processing_functions import select_ROI, compute_concentration_exponential, compute_concentration_linear
+from processing.processing_functions import select_ROI, compute_concentration_exponential, compute_concentration_linear, compute_concentration_3rd_polynomial
 from analysis.Analyse_results_with_connected_components import Measure
 import matplotlib.pyplot as plt
 import sys
@@ -13,11 +13,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from processing.processing_functions import temporal_mean_filter, save_imgs, temporal_median_filter, open_images, \
-    binarize_imgs, correct_background, select_ROI, invert_imgs, mask_ROIs
+    binarize_imgs, correct_background, select_ROI, invert_imgs, mask_ROIs, moving_average
 from analysis.Analyse_results_with_connected_components import Measure
 from skimage import io
 import time
 import timeit
+import pandas as pd
 
 
 class RunAnalysisHandler(FileSystemEventHandler):
@@ -96,17 +97,35 @@ class RunAnalysisHandler(FileSystemEventHandler):
         return self.results_list
 
     def get_concentration(self):
-        y = [x[0] for x in self.results_list[1:]]  # taking the Signal (and ignoring first element which is an empty list)
+        results_df = pd.DataFrame(self.results_list, columns=('Signal', 'Foreground', 'Background'))
+        display(results_df)
+        results_avg_df = moving_average(results_df)
+        display(results_avg_df)
+        y = list(results_avg_df['Signal'])
+        #y = [x[0] for x in self.results_list[1:]]  # taking the Signal (and ignoring first element which is an empty list)
         time_step = self.framerate * self.window_size
         x = np.arange(0, len(y) * time_step, time_step)
         self.concentration = compute_concentration_linear(x, y)
         return self.concentration
     
     def get_concentration_exponential(self):
-        y = [x[0] for x in self.results_list[1:]]  # taking the Signal (and ignoring first element which is an empty list)
+        results_df = pd.DataFrame(self.results_list, columns=('Signal', 'Foreground', 'Background'))
+        results_avg_df = moving_average(results_df)
+        y = list(results_avg_df['Signal'])
+        #y = [x[0] for x in self.results_list[1:]]  # taking the Signal (and ignoring first element which is an empty list)
         time_step = self.framerate * self.window_size
         x = np.arange(0, len(y) * time_step, time_step)
         self.concentration_exponential = compute_concentration_exponential(x, y)
+        return self.concentration_exponential
+    
+    def get_concentration_3rd_polynomial(self):
+        results_df = pd.DataFrame(self.results_list, columns=('Signal', 'Foreground', 'Background'))
+        results_avg_df = moving_average(results_df)
+        y = list(results_avg_df['Signal'])
+        #y = [x[0] for x in self.results_list[1:]]  # taking the Signal (and ignoring first element which is an empty list)
+        time_step = self.framerate * self.window_size
+        x = np.arange(0, len(y) * time_step, time_step)
+        self.concentration_exponential = compute_concentration_3rd_polynomial(x, y)
         return self.concentration_exponential
     
     

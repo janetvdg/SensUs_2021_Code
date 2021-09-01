@@ -19,7 +19,7 @@ import os
 import pandas as pd
 from watchdog.observers import Observer
 from processing.preprocess import select_ROI_image, live_plot
-from processing.processing_functions import select_ROI
+from processing.processing_functions import select_ROI, moving_average
 import matplotlib.pyplot as plt
 #matplotlib.use('TkAgg') # This is for Mac
 import numpy as np
@@ -132,6 +132,14 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
                 print('Saving results as result.csv')
                 results_df['Concentration exponential'] = pd.Series([concentration_exponential for x in range(len(results_df.index))])
                 results_df.to_csv(str(DIR)+'/result.csv', index=True)
+                
+                print("Jaja")
+                
+                concentration_3poly = event_analysis_handler.get_concentration_3rd_polynomial()
+                print("Wiwi")
+                print('Saving results as result.csv')
+                results_df['Concentration 3rd polynomial'] = pd.Series([concentration_3poly for x in range(len(results_df.index))])
+                results_df.to_csv(str(DIR)+'/result.csv', index=True)
 
                 #quit()
                 sys.exit()
@@ -151,6 +159,15 @@ def run_analysis(ROIs, IMG_FOLDER, DIR, window_size = 5, framerate = 2, threshol
         print('Saving results as result.csv')
         results_df['Concentration exponential'] = pd.Series([concentration_exponential for x in range(len(results_df.index))])
         results_df.to_csv(str(DIR)+'/result.csv', index=True)
+        
+        print("Jaja")
+                
+        concentration_3poly = event_analysis_handler.get_concentration_3rd_polynomial()
+        print("Wiwi")
+        print('Saving results as result.csv')
+        results_df['Concentration 3rd polynomial'] = pd.Series([concentration_3poly for x in range(len(results_df.index))])
+        results_df.to_csv(str(DIR)+'/result.csv', index=True)
+
         #quit()
         sys.exit()
     observer.join() # is needed to proper end a thread for "it blocks the thread in which you're making the call, until (self.observer) is finished
